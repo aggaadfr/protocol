@@ -1,0 +1,24 @@
+<component name="ArtifactManager">
+  <artifact name="protocol-iec104:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/protocol_iec104_jar</output-path>
+    <root id="root">
+      <element id="archive" name="protocol-iec104.jar">
+        <element id="module-output" name="protocol-iec104" />
+        <element id="module-output" name="protocol-core" />
+      </element>
+      <element id="library" level="project" name="Maven: com.google.code.findbugs:annotations:2.0.1" />
+      <element id="library" level="project" name="Maven: ch.qos.logback:logback-classic:1.2.3" />
+      <element id="library" level="project" name="Maven: net.java.dev.jna:jna:4.2.2" />
+      <element id="library" level="project" name="Maven: com.google.guava:guava:15.0" />
+      <element id="library" level="project" name="Maven: io.netty:netty-all:4.1.6.Final" />
+      <element id="library" level="project" name="Maven: org.slf4j:slf4j-api:1.7.25" />
+      <element id="library" level="project" name="Maven: org.reflections:reflections:0.9.10" />
+      <element id="library" level="project" name="Maven: org.projectlombok:lombok:1.16.20" />
+      <element id="library" level="project" name="Maven: com.github.purejavacomm:purejavacomm:1.0.2.RELEASE" />
+      <element id="library" level="project" name="Maven: org.javassist:javassist:3.19.0-GA" />
+      <element id="library" level="project" name="Maven: com.alibaba:fastjson:1.2.59" />
+      <element id="library" level="project" name="Maven: joda-time:joda-time:2.9.9" />
+      <element id="library" level="project" name="Maven: ch.qos.logback:logback-core:1.2.3" />
+    </root>
+  </artifact>
+</component>

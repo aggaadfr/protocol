@@ -1,0 +1,12 @@
+wei.yigulu.modbus.domain
+wei.yigulu.modbus.domain.command
+wei.yigulu.modbus.domain.confirm
+wei.yigulu.modbus.domain.datatype
+wei.yigulu.modbus.domain.datatype.numeric
+wei.yigulu.modbus.domain.request
+wei.yigulu.modbus.domain.response
+wei.yigulu.modbus.domain.synchronouswaitingroom
+wei.yigulu.modbus.domain.tcpextracode
+wei.yigulu.modbus.exceptiom
+wei.yigulu.modbus.netty
+wei.yigulu.modbus.utils

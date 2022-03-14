@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Main-Class: wei.yigulu.iec104.Main
+Class-Path: annotations-2.0.1.jar logback-classic-1.2.3.jar jna-4.2.2.ja
+ r guava-15.0.jar netty-all-4.1.6.Final.jar slf4j-api-1.7.25.jar reflect
+ ions-0.9.10.jar lombok-1.16.20.jar purejavacomm-1.0.2.RELEASE.jar javas
+ sist-3.19.0-GA.jar fastjson-1.2.59.jar joda-time-2.9.9.jar logback-core
+ -1.2.3.jar
+

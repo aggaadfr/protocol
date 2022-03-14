@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/protocol.iml" filepath="$PROJECT_DIR$/protocol.iml" />
+      <module fileurl="file://$PROJECT_DIR$/protocol-all/protocol-all.iml" filepath="$PROJECT_DIR$/protocol-all/protocol-all.iml" />
+      <module fileurl="file://$PROJECT_DIR$/protocol-cdt/protocol-cdt.iml" filepath="$PROJECT_DIR$/protocol-cdt/protocol-cdt.iml" />
+      <module fileurl="file://$PROJECT_DIR$/protocol-core/protocol-core.iml" filepath="$PROJECT_DIR$/protocol-core/protocol-core.iml" />
+      <module fileurl="file://$PROJECT_DIR$/protocol-iec104/protocol-iec104.iml" filepath="$PROJECT_DIR$/protocol-iec104/protocol-iec104.iml" />
+      <module fileurl="file://$PROJECT_DIR$/protocol-modbus/protocol-modbus.iml" filepath="$PROJECT_DIR$/protocol-modbus/protocol-modbus.iml" />
+    </modules>
+  </component>
+</project>
