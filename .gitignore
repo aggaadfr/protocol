@@ -1,0 +1,16 @@
+/.idea
+.idea
+/.gradle
+/build/
+/*/build/
+/*/*/build/
+/gradle
+*.hprof
+/**/out
+/json/
+.project
+.settings
+*.iml
+
+/*/
+/*/target

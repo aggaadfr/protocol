@@ -2,25 +2,17 @@
 <project version="4">
   <component name="CompilerConfiguration">
     <annotationProcessing>
-      <profile default="true" name="Default" enabled="true" />
       <profile name="Maven default annotation processors profile" enabled="true">
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
         <module name="protocol-cdt" />
-        <module name="protocol-core" />
         <module name="protocol-all" />
         <module name="protocol-modbus" />
+        <module name="protocol-core" />
         <module name="protocol-iec104" />
       </profile>
     </annotationProcessing>
-    <bytecodeTargetLevel>
-      <module name="protocol" target="1.8" />
-      <module name="protocol-all" target="1.8" />
-      <module name="protocol-cdt" target="1.8" />
-      <module name="protocol-core" target="1.8" />
-      <module name="protocol-iec104" target="1.8" />
-      <module name="protocol-modbus" target="1.8" />
-    </bytecodeTargetLevel>
+    <bytecodeTargetLevel target="8" />
   </component>
 </project>

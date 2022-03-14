@@ -2,6 +2,7 @@ package wei.yigulu.iec104;
 
 import wei.yigulu.iec104.nettyconfig.Iec104SlaverBuilder;
 
+import java.net.InetSocketAddress;
 import java.util.Random;
 
 public class Main {
@@ -12,7 +13,7 @@ public class Main {
 
     private static void testServer()throws Exception{
         Iec104SlaverBuilder slaverBuilder = new Iec104SlaverBuilder(2404);
-		/*slaverBuilder.getConnectFilterManager().appendFilter((c) -> {
+		slaverBuilder.getConnectFilterManager().appendFilter((c) -> {
 			if (slaverBuilder.getChannels().size() >= 1) {
 				return -1;
 			}
@@ -24,7 +25,7 @@ public class Main {
 			} else {
 				return 1;
 			}
-		});*/
+		});
         slaverBuilder.create();
     }
 

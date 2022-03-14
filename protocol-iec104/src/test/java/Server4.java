@@ -16,6 +16,7 @@ import io.netty.handler.codec.string.StringEncoder;
 
 public class Server4 {
 	public static void main(String[] args) {
+		//创建2个netty
 		EventLoopGroup boss = new NioEventLoopGroup();
 		EventLoopGroup worker = new NioEventLoopGroup();
 
@@ -69,28 +70,30 @@ public class Server4 {
 
 }
 
-
+/**
+ * 自定义处理类
+ */
 class ServerHandler4 extends SimpleChannelInboundHandler<String> {
 
-	//读取客户端发送的数据
+	//读取客户端发送过来的数据
 	@Override
 	protected void channelRead0(ChannelHandlerContext ctx, String msg) throws Exception {
 		System.out.println("client response :" + msg);
 	}
 
-	//新客户端接入
+	//新客户端接入后调用
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		System.out.println("channelActive");
 	}
 
-	//客户端断开
+	//客户端断开后调用
 	@Override
 	public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 		System.out.println("channelInactive");
 	}
 
-	//异常
+	//异常后调用
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		//关闭通道

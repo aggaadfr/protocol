@@ -71,15 +71,15 @@ public class Apdu {
 	 */
 	public enum ApciType {
 		/**
-		 * I帧
+		 * I帧   总招，消息体
 		 */
 		I_FORMAT,
 		/**
-		 * S帧
+		 * S帧	数据确认帧
 		 */
 		S_FORMAT,
 		/**
-		 * U帧，测试确认
+		 * U帧，测试确认	  启动链路，测试链路   启动、测试、停止
 		 */
 		TESTFR_CON,
 		/**

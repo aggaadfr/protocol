@@ -26,7 +26,7 @@ public class SlaveTest {
 			}
 		});*/
 		slaverBuilder.create();
-		Random random = new Random();
+//		Random random = new Random();
 
 	}
 
