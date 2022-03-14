@@ -105,7 +105,7 @@ public abstract class AbstractTcpServerBuilder extends BaseProtocolBuilder {
 			this.serverBootstrap = new ServerBootstrap();
 			// 绑定线程池
 			this.serverBootstrap.group(getOrCrateLoopGroup())
-					// 指定使用的channel
+					// 指定使用的channel为NioServerSocketChannel
 					.channel(NioServerSocketChannel.class)
 					// 绑定客户端连接时候触发操作
 					.childHandler(getOrCreateChannelInitializer());
@@ -126,6 +126,7 @@ public abstract class AbstractTcpServerBuilder extends BaseProtocolBuilder {
 	 */
 	protected EventLoopGroup getOrCrateLoopGroup() {
 		if (this.group == null) {
+			//它是一个无限循环（Loop），在循环中不断处理接收到的事件（Event）
 			this.group = new NioEventLoopGroup();
 		}
 		return this.group;

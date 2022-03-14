@@ -24,12 +24,20 @@ public class Iec104SlaverBuilder extends AbstractTcpSlaverBuilder {
 		super(port);
 	}
 
+	/**
+	 * 初始化通道
+	 * @return
+	 */
 	@Override
 	protected ProtocolChannelInitializer getOrCreateChannelInitializer() {
 		return new ProtocolChannelInitializer<SocketChannel>(this) {
+			//初始化多个Channel上的事件处理
 			@Override
 			protected void initChannel(SocketChannel ch) throws Exception {
+				//添加是有顺序的
+				//添加组件 数据帧处理拆包类  一个线程执行
 				ch.pipeline().addLast(new AllCustomDelimiterHandler());
+				//添加组件 消息处理类  一个线程执行
 				ch.pipeline().addLast(new Slave104Handle((Iec104SlaverBuilder) builder));
 			}
 

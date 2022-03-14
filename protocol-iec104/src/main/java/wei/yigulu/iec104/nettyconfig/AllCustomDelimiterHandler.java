@@ -10,7 +10,8 @@ import wei.yigulu.utils.DataConvertor;
 
 
 /**
- * 未继承netty的数据帧处理拆包类
+ * 未继承netty的
+ * 数据帧处理拆包类
  *
  * @author 修唯xiuwei
  * @version 3.0
