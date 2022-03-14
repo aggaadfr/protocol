@@ -4,6 +4,7 @@ package wei.yigulu.iec104.nettyconfig;
 import com.alibaba.fastjson.JSON;
 import io.netty.buffer.ByteBuf;
 import io.netty.channel.ChannelHandlerContext;
+import lombok.extern.slf4j.Slf4j;
 import org.joda.time.DateTime;
 import wei.yigulu.netty.AbstractDelimiterHandler;
 import wei.yigulu.utils.DataConvertor;
@@ -16,7 +17,7 @@ import wei.yigulu.utils.DataConvertor;
  * @author 修唯xiuwei
  * @version 3.0
  */
-
+//@Slf4j
 public class AllCustomDelimiterHandler extends AbstractDelimiterHandler {
 
 
@@ -24,14 +25,23 @@ public class AllCustomDelimiterHandler extends AbstractDelimiterHandler {
 
 
 	public AllCustomDelimiterHandler() {
+		//判断是否是断包的最大时间间隔
 		super.maxTimeSpace = 100;
+		//接收的最长的报文长度
 		super.maxLength = 10240;
 	}
 
-
+	/**
+	 * 收到数据后调用--拆包
+	 *
+	 * @param ctx
+	 * @param msg 字节缓冲区
+	 * @throws Exception
+	 */
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		System.out.println("channelRead111:" + JSON.toJSONString(msg));
+		System.out.println("channelRead111---slaver拆包:" + JSON.toJSONString(msg));
+		//判断写入报文是否超过最大长度，并把数据写入缓存内容
 		if (isOverMaxLength((ByteBuf) msg)) {
 			return;
 		}
@@ -58,6 +68,7 @@ public class AllCustomDelimiterHandler extends AbstractDelimiterHandler {
 				return;
 			} else {
 				cumulation.resetReaderIndex();
+				//TODO 输出数据
 				//如果数据帧长度足够 将规定长度的直接加入out 队列
 				ctx.fireChannelRead(cumulation.readBytes(len + 2));
 				//查看后续的字节里面头字节的位置
@@ -73,6 +84,7 @@ public class AllCustomDelimiterHandler extends AbstractDelimiterHandler {
 			if (cumulation.readableBytes() != 0) {
 				log.warn("这段字节中没有数据头,舍弃:" + DataConvertor.ByteBuf2String(cumulation.readBytes(cumulation.readableBytes())));
 			}
+			//清除寄存ByteBuf的指向和内容
 			clearCumulation();
 		}
 	}

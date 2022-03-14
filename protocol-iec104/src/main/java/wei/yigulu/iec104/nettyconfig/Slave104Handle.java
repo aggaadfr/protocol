@@ -17,7 +17,7 @@ import wei.yigulu.utils.DataConvertor;
 import java.net.InetSocketAddress;
 
 /**
- * 消息处理类
+ * 消息处理类 继承netty SimpleChannelInboundHandler自动释放数据
  *
  * @author 修唯xiuwei
  * @version 3.0
@@ -53,16 +53,24 @@ public class Slave104Handle extends SimpleChannelInboundHandler<ByteBuf> {
 
 	private Class<? extends Apdu> apduClass = Apdu.class;
 
+	/**
+	 * 拆包后的数据会来到这个
+	 *
+	 * @param ctx
+	 * @param msg 字节缓冲区
+	 * @throws Exception
+	 */
 	@Override
 	public void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
-		System.out.println("channelRead222:" + JSON.toJSONString(msg));
+		System.out.println("channelRead222: 拆包后的数据进入消息处理类" + JSON.toJSONString(msg));
 		//收数据
 		log.debug("----------------------------------------------------------------------------------");
 		log.debug("re <= " + DataConvertor.ByteBuf2String(msg));
+		//设置通道传输，并将字节流数据帧转化为相应的APDU指令
 		Apdu apdu = apduClass.newInstance().setChannel(ctx.channel()).setIec104Builder(slaverBuilder).setLog(slaverBuilder.getLog()).loadByteBuf(msg);
-		System.out.println("channelRead0-apdu:" + JSON.toJSONString(apdu));
+		System.out.println("channelRead0-apdu(S I U 格式帧):" + JSON.toJSONString(apdu));
+		//接收帧后的应答措施
 		apdu.answer();
-
 	}
 
 

@@ -14,7 +14,7 @@ import org.slf4j.LoggerFactory;
 import wei.yigulu.utils.DataConvertor;
 
 /**
- * 未继承netty的数据帧处理拆包类
+ * 自定义 未继承netty的数据帧处理拆包类
  *
  * @author 修唯xiuwei
  * @version 3.0
@@ -89,13 +89,14 @@ public abstract class AbstractDelimiterHandler extends ChannelInboundHandlerAdap
 	 * @param end     结束游标
 	 * @param byteBuf 被检索的ByteBuf
 	 * @param head    头字节数组
-	 * @return int  头位置
+	 * @return int  返回头所在的位置
 	 */
 	protected int getHeadIndex(int from, int end, ByteBuf byteBuf, byte[] head) {
 		if (byteBuf.readableBytes() < head.length) {
 			return -1;
 		}
 		for (int i = from; i < end; i++) {
+			//判断两个字节数是否相等
 			if (isEqualByteArr(head, ByteBufUtil.getBytes(byteBuf, i, head.length))) {
 				return i;
 			}

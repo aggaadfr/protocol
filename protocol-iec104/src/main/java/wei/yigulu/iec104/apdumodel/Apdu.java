@@ -52,7 +52,7 @@ public class Apdu {
 	protected ApciType apciType = ApciType.I_FORMAT;
 
 	/**
-	 * Asdu
+	 * Asdu消息实体
 	 */
 	protected Asdu asdu = null;
 
@@ -106,9 +106,9 @@ public class Apdu {
 
 
 	/**
-	 * 读取字节流 将数据帧转化为APDU
+	 * 读取字节流 将数据帧转化为APDU(包含asdu消息实体)
 	 *
-	 * @param dis dis
+	 * @param dis 字节缓冲区
 	 * @return apdu
 	 * @throws Exception exception
 	 */
@@ -240,12 +240,13 @@ public class Apdu {
 
 
 	/**
-	 * 接收帧后的应答措施
+	 * TODO slave接收帧后的应答措施
 	 *
 	 * @throws Iec104Exception iec exception
 	 */
 	public void answer() throws Iec104Exception {
 		byte[][] bb = new byte[0][];
+		//I帧
 		if (this.apciType == ApciType.I_FORMAT) {
 			try {
 				bb = this.asdu.getDataFrame().handleAndAnswer(this);
@@ -257,17 +258,22 @@ public class Apdu {
 				log.error("数据帧解析后的逻辑处理出现异常", e);
 				//throw new Iec104Exception("I帧响应帧编译出错");
 			}
+			//s帧
 		} else if (this.apciType == ApciType.S_FORMAT) {
 			bb = sHandleAndAnswer();
+			//u帧
 		} else {
 			bb = uHandleAndAnswer();
 		}
+		//创建复合缓冲区
 		ByteBuf buffer = Unpooled.compositeBuffer();
 		if (bb != null) {
 			for (byte[] b : bb) {
+				//写入缓冲区
 				buffer.writeBytes(b);
 			}
 		}
+		//发送数据出去
 		this.channel.pipeline().writeAndFlush(buffer);
 	}
 

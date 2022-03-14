@@ -118,8 +118,8 @@ public class Asdu<T extends AbstractDataFrameType> {
 
 
 	/**
-	 * 数据单元 数据单元的类型是有typeId决定的
-	 * 类型不同里面说承载的数据也不同
+	 * 数据单元 数据单元的类型是由typeId决定的
+	 * 类型不同里面所承载的数据也不同
 	 */
 	protected T dataFrame;
 
@@ -130,9 +130,10 @@ public class Asdu<T extends AbstractDataFrameType> {
 	protected byte[] privateInformation;
 
 	/**
+	 * 将字节缓冲区构建为Asdu
 	 * Load byte buf asdu
 	 *
-	 * @param dataInputStream data input stream
+	 * @param dataInputStream 字节缓冲区 data input stream
 	 * @return the asdu
 	 * @throws Exception exception
 	 */
