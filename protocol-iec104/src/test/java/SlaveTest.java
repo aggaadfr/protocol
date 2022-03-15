@@ -11,6 +11,7 @@ import java.util.Random;
 public class SlaveTest {
 
 	public static void main(String[] args) throws Exception {
+		//TODO slave主入口   阻塞线程
 		Iec104SlaverBuilder slaverBuilder = new Iec104SlaverBuilder(2404);
 		/*slaverBuilder.getConnectFilterManager().appendFilter((c) -> {
 			if (slaverBuilder.getChannels().size() >= 1) {

@@ -66,11 +66,18 @@ public abstract class AbstractTcpMasterBuilder extends AbstractMasterBuilder {
 		this.port = port;
 	}
 
+	/**
+	 * 启动Master主入口
+	 *
+	 * 这个是线程安全的，可以启动多个
+	 */
 	@Override
 	public void create() {
 		synchronized (this) {
 			if (future != null) {
+				//单主机模式监听连接
 				this.future.removeListener(getOrCreateConnectionListener());
+				//关闭与指定的ChannelFuture相关联的Channel。
 				this.future.addListener(ChannelFutureListener.CLOSE);
 				future = null;
 				try {
@@ -81,14 +88,17 @@ public abstract class AbstractTcpMasterBuilder extends AbstractMasterBuilder {
 			}
 			log.debug("创建连接");
 			try {
+				//slave连接
 				SocketAddress remoteAddress = new InetSocketAddress(getIp(), getPort());
 				if (!StringUtil.isNullOrEmpty(getSelfIp()) && getSelfPort() != null) {
+					//mater连接
 					SocketAddress localAddress = new InetSocketAddress(getSelfIp(), getSelfPort());
+					//TODO 创建、获取引导器，并初始化连接器
 					future = getOrCreateBootstrap().connect(remoteAddress, localAddress);
 				} else {
 					future = getOrCreateBootstrap().connect(remoteAddress);
 				}
-				log.debug("为连接添加监听");
+				log.debug("为slave、master连接添加监听");
 				future.addListener(getOrCreateConnectionListener());
 			} catch (Exception e) {
 				log.debug("创建连接时发生异常");
@@ -101,6 +111,7 @@ public abstract class AbstractTcpMasterBuilder extends AbstractMasterBuilder {
 			}
 		}
 		try {
+			//让主线程进入wait状态，如果监听到关闭事件，可以优雅的关闭通道和nettyserver
 			future.channel().closeFuture().sync();
 		} catch (InterruptedException e) {
 			e.printStackTrace();
@@ -115,20 +126,33 @@ public abstract class AbstractTcpMasterBuilder extends AbstractMasterBuilder {
 		return this.workGroup;
 	}
 
-
+	/**
+	 * 获取或创建引导器
+	 *
+	 * @return
+	 */
 	@Override
 	public Bootstrap getOrCreateBootstrap() {
 		if (this.bootstrap == null) {
+			//启动引导器
 			bootstrap = new Bootstrap();
+			//1、设置reactor 线程
 			bootstrap.group(getOrCreateWorkGroup())
+					//2、设置nio类型的channel
 					.channel(NioSocketChannel.class)
+					//TODO 3、自定义装配流水线，初始化
 					.handler(getOrCreateChannelInitializer());
+			//4、设置通道选项
 			bootstrap.option(ChannelOption.SO_KEEPALIVE, false);
 			bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000);
 		}
 		return this.bootstrap;
 	}
 
+	/**
+	 * 获取或创建连接监听
+	 * @return
+	 */
 	@Override
 	public ProtocolConnectionListener getOrCreateConnectionListener() {
 		if (this.connectionListener == null) {

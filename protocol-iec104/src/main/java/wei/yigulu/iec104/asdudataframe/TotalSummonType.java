@@ -29,9 +29,7 @@ public class TotalSummonType extends AbstractDataFrameType {
 	 * TYPEID
 	 */
 	public static final int TYPEID = TechnicalTerm.TOTAL_SUMMONTYPE_TYPE;
-
 	private InformationBodyAddress address = new InformationBodyAddress(20);
-
 	private int value;
 
 

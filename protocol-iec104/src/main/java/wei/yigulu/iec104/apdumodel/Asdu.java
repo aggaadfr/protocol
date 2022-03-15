@@ -9,8 +9,8 @@ import lombok.experimental.Accessors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import wei.yigulu.iec104.asdudataframe.AbstractDataFrameType;
-import wei.yigulu.iec104.container.AsduTypeAnnotationContainer;
-import wei.yigulu.iec104.container.DataTypeClasses;
+import wei.yigulu.iec104.asdudataframe.typemodel.container.AsduTypeAnnotationContainer;
+import wei.yigulu.iec104.asdudataframe.typemodel.container.DataTypeClasses;
 
 import java.lang.reflect.Method;
 import java.util.List;

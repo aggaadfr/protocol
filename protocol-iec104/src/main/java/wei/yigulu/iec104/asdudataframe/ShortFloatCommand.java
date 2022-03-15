@@ -87,9 +87,14 @@ public class ShortFloatCommand extends AbstractDataFrameType {
 		buffer.add((byte) this.quality.encode());
 	}
 
+	/**
+	 * 把ShortFloatCommand转成Asdu
+	 * @return
+	 */
 	@Override
 	public Asdu generateBack() {
 		Asdu asdu = new Asdu();
+		//短浮点命令
 		asdu.setTypeId(TYPEID);
 		asdu.setDataFrame(this);
 		asdu.getVsq().setSq(0);
@@ -102,15 +107,20 @@ public class ShortFloatCommand extends AbstractDataFrameType {
 	@Override
 	public byte[][] handleAndAnswer(Apdu apdu) throws Exception {
 		if (apdu.getAsdu().getCot().getNot() == 6) {
+			//响应应答
 			byte[][] bs = new byte[1][];
 			apdu.getAsdu().getCot().setNot(7);
 			SendAndReceiveNumUtil.setSendAndReceiveNum(apdu, apdu.getChannel().id());
 			bs[0] = apdu.encode();
 			return bs;
 		} else {
+			//响应应答结果
+			//拿到发送过来的ShortFloatCommand内容
 			ShortFloatCommand shortFloatCommand = (ShortFloatCommand) apdu.getAsdu().getDataFrame();
+			//设置心的命令等待者
 			CommandWaiter commandWaiter = new CommandWaiter(apdu.getChannel().id(), apdu, shortFloatCommand.getAddresses().getAddress());
 			commandWaiter.set(new IeShortFloat(shortFloatCommand.getVal()));
+			//从List中获取对应的CommandWaiter，并把
 			SendCommandHelper.setIecValue(commandWaiter);
 			return null;
 		}

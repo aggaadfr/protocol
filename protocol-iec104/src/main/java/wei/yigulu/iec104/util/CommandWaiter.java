@@ -47,6 +47,12 @@ public class CommandWaiter {
 		this.dataAddress = dataAddress;
 	}
 
+	/**
+	 * 等待5s获取数据
+	 *
+	 * @return
+	 * @throws Iec104Exception
+	 */
 	public synchronized IecDataInterface get() throws Iec104Exception {
 		if (this.data == null) {
 			try {
@@ -59,6 +65,11 @@ public class CommandWaiter {
 		throw new Iec104Exception("控制命令无响应");
 	}
 
+	/**
+	 * 设置数据
+	 *
+	 * @param data
+	 */
 	public synchronized void set(IecDataInterface data) {
 		this.data = data;
 		this.notifyAll();

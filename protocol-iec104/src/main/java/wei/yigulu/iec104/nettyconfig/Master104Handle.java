@@ -9,8 +9,8 @@ import io.netty.handler.timeout.IdleStateEvent;
 import lombok.NoArgsConstructor;
 import org.slf4j.Logger;
 import wei.yigulu.iec104.apdumodel.Apdu;
-import wei.yigulu.iec104.container.Iec104Link;
-import wei.yigulu.iec104.container.LinkContainer;
+import wei.yigulu.iec104.asdudataframe.typemodel.container.Iec104Link;
+import wei.yigulu.iec104.asdudataframe.typemodel.container.LinkContainer;
 import wei.yigulu.netty.AbstractTcpMasterBuilder;
 import wei.yigulu.utils.DataConvertor;
 
@@ -56,11 +56,17 @@ public class Master104Handle extends SimpleChannelInboundHandler<ByteBuf> {
 
 	private Class<? extends Apdu> apduClass = Apdu.class;
 
-
+	/**
+	 * read消息处理类
+	 *
+	 * @param ctx
+	 * @param msg
+	 * @throws Exception
+	 */
 	@Override
 	public void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
 		//收数据
-		log.debug("----------------------------------------------------------------------------------");
+		log.debug("-------------------------------------master端消息处理---------------------------------------------");
 		log.debug("re <= " + DataConvertor.ByteBuf2String(msg));
 		Apdu apdu = apduClass.newInstance().setChannel(ctx.channel()).setIec104Builder(masterBuilder).setLog(log).loadByteBuf(msg);
 		if (apdu.getApciType() == Apdu.ApciType.I_FORMAT) {
@@ -69,7 +75,13 @@ public class Master104Handle extends SimpleChannelInboundHandler<ByteBuf> {
 		apdu.answer();
 	}
 
-
+	/**
+	 * 异常处理
+	 *
+	 * @param ctx
+	 * @param cause
+	 * @throws Exception
+	 */
 	@Override
 	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
 		if (this.exceptionNum > 10) {
@@ -84,17 +96,28 @@ public class Master104Handle extends SimpleChannelInboundHandler<ByteBuf> {
 	}
 
 
+	/**
+	 * TODO 通道建立成功后 第一次调用
+	 *
+	 * @param ctx
+	 * @throws Exception
+	 */
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
 		log.debug("发出U帧，启动命令");
 		this.isInitiative = false;
+		//获得slave连接
 		InetSocketAddress ipSocket = (InetSocketAddress) ctx.channel().remoteAddress();
+		//获得master连接
 		InetSocketAddress localIpSocket = (InetSocketAddress) ctx.channel().localAddress();
 		String clientIp = ipSocket.getAddress().getHostAddress();
 		Integer clientPort = ipSocket.getPort();
 		log.info("连接" + clientIp + ":" + clientPort + "服务端成功，本地端口："+localIpSocket.getPort());
+		//master添加到104连接存储
 		LinkContainer.getInstance().getLinks().put(ctx.channel().id(), new Iec104Link(ctx.channel(), clientIp, clientPort, Iec104Link.Role.SLAVER, masterBuilder.getLog()));
+		//master写出起始帧
 		ctx.writeAndFlush(Unpooled.copiedBuffer(TechnicalTerm.START));
+		//通道连接成功后处理
 		this.masterBuilder.connected();
 	}
 

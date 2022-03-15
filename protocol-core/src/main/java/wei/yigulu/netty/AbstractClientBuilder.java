@@ -33,7 +33,7 @@ public abstract class AbstractClientBuilder extends BaseProtocolBuilder {
 	protected Bootstrap bootstrap = null;
 
 	/**
-	 * Future
+	 * Future  通道  异步
 	 */
 	@Getter
 	@Setter

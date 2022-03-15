@@ -79,9 +79,9 @@ public abstract class AbstractTcpServerBuilder extends BaseProtocolBuilder {
 		ChannelFuture cf = getOrCrateServerBootstrap().bind().sync();
 		this.fatherChannel = cf.channel();
 		log.info("Slaver端启动成功；端口" + port);
-		// 关闭服务器通道
+		// 优雅关闭服务器通道
 		cf.channel().closeFuture().sync();
-		// 释放线程池资源
+		// 优雅释放线程池资源
 		group.shutdownGracefully().sync();
 	}
 
@@ -107,7 +107,7 @@ public abstract class AbstractTcpServerBuilder extends BaseProtocolBuilder {
 			this.serverBootstrap.group(getOrCrateLoopGroup())
 					// 指定使用的channel为NioServerSocketChannel
 					.channel(NioServerSocketChannel.class)
-					// 绑定客户端连接时候触发操作
+					// TODO 绑定客户端连接时候触发操作
 					.childHandler(getOrCreateChannelInitializer());
 			// 绑定监听端口
 			if (this.ip != null) {

@@ -32,7 +32,7 @@ public class AllCustomDelimiterHandler extends AbstractDelimiterHandler {
 	}
 
 	/**
-	 * 收到数据后调用--拆包
+	 * 收到数据后调用--拆包和封包
 	 *
 	 * @param ctx
 	 * @param msg 字节缓冲区
@@ -40,7 +40,7 @@ public class AllCustomDelimiterHandler extends AbstractDelimiterHandler {
 	 */
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		System.out.println("channelRead111---slaver拆包:" + JSON.toJSONString(msg));
+		System.out.println("channelRead111---拆包or封包:" + JSON.toJSONString(msg));
 		//判断写入报文是否超过最大长度，并把数据写入缓存内容
 		if (isOverMaxLength((ByteBuf) msg)) {
 			return;

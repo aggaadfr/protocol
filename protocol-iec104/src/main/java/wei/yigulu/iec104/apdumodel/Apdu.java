@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 import lombok.experimental.Accessors;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import wei.yigulu.iec104.container.Iec104Link;
-import wei.yigulu.iec104.container.LinkContainer;
+import wei.yigulu.iec104.asdudataframe.typemodel.container.Iec104Link;
+import wei.yigulu.iec104.asdudataframe.typemodel.container.LinkContainer;
 import wei.yigulu.iec104.exception.Iec104Exception;
 import wei.yigulu.iec104.nettyconfig.TechnicalTerm;
 import wei.yigulu.iec104.util.SendAndReceiveNumUtil;
@@ -106,7 +106,7 @@ public class Apdu {
 
 
 	/**
-	 * 读取字节流 将数据帧转化为APDU(包含asdu消息实体)
+	 * TODO 读取字节流 将数据帧转化为APDU(包含asdu消息实体)
 	 *
 	 * @param dis 字节缓冲区
 	 * @return apdu
@@ -240,7 +240,7 @@ public class Apdu {
 
 
 	/**
-	 * TODO slave接收帧后的应答措施
+	 * TODO 接收帧后的应答措施
 	 *
 	 * @throws Iec104Exception iec exception
 	 */
@@ -249,6 +249,7 @@ public class Apdu {
 		//I帧
 		if (this.apciType == ApciType.I_FORMAT) {
 			try {
+				//TODO 发送数据I帧相应策略数据，会根据master端发过来的Asdu进行相应的handleAndAnswer应答
 				bb = this.asdu.getDataFrame().handleAndAnswer(this);
 			} catch (Exception e) {
 				if (e instanceof NullPointerException) {
@@ -258,7 +259,7 @@ public class Apdu {
 				log.error("数据帧解析后的逻辑处理出现异常", e);
 				//throw new Iec104Exception("I帧响应帧编译出错");
 			}
-			//s帧
+			//s帧  测试帧  没做处理，丢失，异常，重复的情况
 		} else if (this.apciType == ApciType.S_FORMAT) {
 			bb = sHandleAndAnswer();
 			//u帧
@@ -285,17 +286,28 @@ public class Apdu {
 	 */
 	public byte[][] uHandleAndAnswer() throws Iec104Exception {
 		byte[][] bb = null;
+		//U帧，启动命令
 		if (this.apciType == ApciType.STARTDT_ACT) {
 			bb = new byte[1][];
+			//建立连接时，对起始帧的应答
 			bb[0] = TechnicalTerm.STARTBACK;
+
+			//U帧，启动确认
 		} else if (this.apciType == ApciType.STARTDT_CON) {
-			//bb = new byte[1][];
-			//bb[0] = TechnicalTerm.GENERALINTERROGATION;
+			bb = new byte[1][];
+			//总召唤
+			bb[0] = TechnicalTerm.GENERALINTERROGATION;
+
+			//U帧，停止命令
 		} else if (this.apciType == ApciType.STOPDT_ACT) {
 			bb = new byte[1][];
+			//stop
 			bb[0] = TechnicalTerm.STOPBACK;
+
+			//U帧，测试命令
 		} else if (this.apciType == ApciType.TESTFR_ACT) {
 			bb = new byte[1][];
+			//test
 			bb[0] = TechnicalTerm.TESTBACK;
 		}
 		return bb;
@@ -309,8 +321,10 @@ public class Apdu {
 	 * @throws Iec104Exception iec exception
 	 */
 	public byte[][] sHandleAndAnswer() throws Iec104Exception {
+		//从储存的104连接中根据id得到相应Iec104Link
 		Iec104Link link = LinkContainer.getInstance().getLink(channel.id());
 		int send = this.receiveSeqNum;
+		//得到master端的序号
 		int send1=link.getISend();
 		if(send1>send){
 			loseSend();

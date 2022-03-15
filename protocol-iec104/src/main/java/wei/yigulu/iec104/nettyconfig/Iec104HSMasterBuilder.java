@@ -30,7 +30,10 @@ public class Iec104HSMasterBuilder extends AbstractHSTcpMasterBuilder {
 		super(ip, port);
 	}
 
-
+	/**
+	 * 获取或创建通道初始化
+	 * @return
+	 */
 	@Override
 	protected ProtocolChannelInitializer getOrCreateChannelInitializer() {
 		return Iec104MasterBuilder.getDefaultChannelInitializer(this);

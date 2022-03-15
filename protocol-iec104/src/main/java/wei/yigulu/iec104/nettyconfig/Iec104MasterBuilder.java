@@ -24,9 +24,7 @@ import java.util.concurrent.TimeUnit;
 public class Iec104MasterBuilder extends AbstractTcpMasterBuilder {
 
 	private static final String HEARTBEATPROPNAME = "heartBeatIntervalTime";
-
 	private static final int HEARTBEATDEFVAL = 30;
-
 	private static final int HEARTBEAT = PropertiesReader.getInstance().getIntProp(HEARTBEATPROPNAME, HEARTBEATDEFVAL);
 
 
@@ -40,20 +38,35 @@ public class Iec104MasterBuilder extends AbstractTcpMasterBuilder {
 		super(ip, port);
 	}
 
-
+	/**
+	 * 通道初始化
+	 *
+	 * @return
+	 */
 	@Override
 	protected ProtocolChannelInitializer getOrCreateChannelInitializer() {
 		return getDefaultChannelInitializer(this);
 	}
 
+	/**
+	 * 获取或创建通道初始化
+	 *
+	 * @param masterBuilder
+	 * @return
+	 */
 	public static ProtocolChannelInitializer<SocketChannel> getDefaultChannelInitializer(AbstractTcpMasterBuilder masterBuilder) {
 		return new ProtocolChannelInitializer<SocketChannel>(masterBuilder) {
 			@Override
 			protected void initChannel(SocketChannel ch) throws Exception {
+				//数据帧处理拆包类
 				AllCustomDelimiterHandler handler = new AllCustomDelimiterHandler();
+				//日志打印由BaseProtocolBuilder打印
 				handler.setLog(masterBuilder.getLog());
+				//添加  数据帧处理拆包类
 				ch.pipeline().addLast(handler);
+				//添加  心跳机制
 				ch.pipeline().addLast(new IdleStateHandler(HEARTBEAT, 0, 0, TimeUnit.SECONDS));
+				//添加  master消息处理类
 				ch.pipeline().addLast(new Master104Handle((AbstractTcpMasterBuilder) builder));
 			}
 		};

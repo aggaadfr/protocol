@@ -26,15 +26,18 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 遥测控制命令
- *
- * @author: xiuwei
- * @version:
+ * 自定义发送模拟数据
  */
 @AsduType
 public class CustomDeviceCommand extends TotalSummonType {
 
 
+	/**
+	 *
+	 * @param apdu
+	 * @return
+	 * @throws Exception
+	 */
 	@Override
 	public byte[][] handleAndAnswer(Apdu apdu) throws Exception {
 //		Map<Integer, Boolean> booleans = new HashMap<>();
@@ -76,6 +79,7 @@ public class CustomDeviceCommand extends TotalSummonType {
 				});
 			}
 			try {
+				//发送遥测 数据帧
 				SendDataFrameHelper.sendYcDataFrame(apdu.getChannel(), booleans, 1, 20, null);
 			}catch (Exception e){
 //				e.printStackTrace();
