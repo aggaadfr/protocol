@@ -7,7 +7,7 @@ import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
 /**
- * 配置信息读取
+ * 配置信息读取工具类
  *
  * @author 修唯xiuwei
  * @version 3.0

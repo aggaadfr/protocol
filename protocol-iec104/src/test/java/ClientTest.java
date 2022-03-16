@@ -2,7 +2,7 @@ import wei.yigulu.iec104.nettyconfig.Iec104HSMasterBuilder;
 
 
 /**
- * 客户端测试
+ * 客户端和slave建立连接测试
  *
  * @author 修唯xiuwei
  * @create 2019-01-22 16:05

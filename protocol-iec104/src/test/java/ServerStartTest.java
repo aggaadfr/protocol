@@ -7,26 +7,27 @@ import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 
 /**
- * 测试客户端
+ * 测试如何启动一个slave客户端，关键是：自定义  消息处理类
  *
  * @author 修唯xiuwei
  * @create 2018-02-05 15:56
  * @Email 524710549@qq.com
  **/
 
-public class Server4 {
+public class ServerStartTest {
 	public static void main(String[] args) {
-		//创建2个netty
+		//创建2个netty线程组
+		// 一个Netty服务端启动时，通常会有两个NioEventLoopGroup：一个是监听线程组，主要是监听客户端请求，另一个是工作线程组，主要是处理与客户端的数据通讯。
 		EventLoopGroup boss = new NioEventLoopGroup();
 		EventLoopGroup worker = new NioEventLoopGroup();
 
 		try {
 			//辅助启动类
 			ServerBootstrap bootstrap = new ServerBootstrap();
-			//设置线程池
+			//设置线程池   有无先后顺序
 			bootstrap.group(boss, worker);
 
-			//设置socket工厂
+			//设置socket工厂  用于服务端非阻塞地接收TCP连接
 			bootstrap.channel(NioServerSocketChannel.class);
 
 			//设置管道工厂
@@ -39,7 +40,7 @@ public class Server4 {
 					pipeline.addLast(new StringDecoder());
 					//字符串编码器
 					pipeline.addLast(new StringEncoder());
-					//处理类
+					//TODO 自定义  消息处理类
 					pipeline.addLast(new ServerHandler4());
 				}
 			});
@@ -56,7 +57,7 @@ public class Server4 {
 			ChannelFuture future = bootstrap.bind(9001).sync();
 			System.out.println("server start ...... ");
 
-			//等待服务端监听端口关闭
+			//优雅关闭 等待服务端监听端口关闭
 			future.channel().closeFuture().sync();
 
 		} catch (InterruptedException e) {

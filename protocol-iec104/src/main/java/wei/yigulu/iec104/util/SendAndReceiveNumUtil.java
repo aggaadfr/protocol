@@ -13,7 +13,7 @@ import wei.yigulu.utils.DataConvertor;
 
 
 /**
- * 用以处理接收和发送序列号的处理类
+ * 发送和接收序列号的处理类
  *
  * @author 修唯xiuwei
  * @version 3.0

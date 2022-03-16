@@ -7,7 +7,7 @@ import wei.yigulu.iec104.asdudataframe.typemodel.IecDataInterface;
 import wei.yigulu.iec104.exception.Iec104Exception;
 
 /**
- * 命令等待者
+ * 发送一条数据后，命令等待者消息返回工具类
  *
  * @author xiuwei
  * @date 2021/05/11
