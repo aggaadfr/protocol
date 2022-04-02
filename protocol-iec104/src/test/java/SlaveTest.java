@@ -5,6 +5,8 @@ import java.net.InetSocketAddress;
 import java.util.Random;
 
 /**
+ * 客户端启动测试
+ *
  * @author: xiuwei
  * @version:
  */

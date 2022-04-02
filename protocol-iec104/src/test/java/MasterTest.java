@@ -1,4 +1,7 @@
 import io.netty.util.ResourceLeakDetector;
+import wei.yigulu.iec104.apdumodel.Apdu;
+import wei.yigulu.iec104.apdumodel.Asdu;
+import wei.yigulu.iec104.asdudataframe.TotalSummonType;
 import wei.yigulu.iec104.nettyconfig.Iec104HSMasterBuilder;
 import wei.yigulu.iec104.util.SendCommandHelper;
 
@@ -18,10 +21,11 @@ public class MasterTest {
 		//不阻塞线程
 		masterBuilder.createByUnBlock();
 		Thread.sleep(3000L);
+		//
 //		SendCommandHelper.sendShortCommand(masterBuilder, 0, 1, 16385, 0.452f);
 		SendCommandHelper.sendShortCommand(masterBuilder, 0, 1, 7, 0.452f);
 
-	/*	//创建总召唤类型I帧
+		//创建总召唤类型I帧
 		TotalSummonType totalSummonType = new TotalSummonType();
 		//反向生成asdu
 		Asdu asdu = totalSummonType.generateBack();
@@ -30,7 +34,7 @@ public class MasterTest {
 		//配置公共地址位
 		asdu.setCommonAddress(1);
 		Apdu apdu = new Apdu().setAsdu(asdu);
-		masterBuilder.sendFrameToOpposite(apdu.encode());*/
+		masterBuilder.sendFrameToOpposite(apdu.encode());
 
 	}
 }
