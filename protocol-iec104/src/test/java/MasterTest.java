@@ -6,7 +6,7 @@ import wei.yigulu.iec104.nettyconfig.Iec104HSMasterBuilder;
 import wei.yigulu.iec104.util.SendCommandHelper;
 
 /**
- * dad
+ * master测试数据发送
  *
  * @author 修唯xiuwei
  * @create 2019-03-14 16:46
