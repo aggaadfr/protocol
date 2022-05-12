@@ -29,8 +29,8 @@ public abstract class AbstractDataFrameType {
 	/**
 	 * 读取ByteBuf组装DataType
 	 *
-	 * @param is  is
-	 * @param vsq vsq
+	 * @param is  msg
+	 * @param vsq 可变结构限定词
 	 */
 	public abstract void loadByteBuf(ByteBuf is, Vsq vsq);
 

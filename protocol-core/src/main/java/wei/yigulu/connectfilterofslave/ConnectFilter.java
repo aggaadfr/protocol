@@ -3,7 +3,7 @@ package wei.yigulu.connectfilterofslave;
 import io.netty.channel.Channel;
 
 /**
- * 连接的适配器
+ * 连接的适配器 通道channel
  *
  * @author: xiuwei
  * @version:

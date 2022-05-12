@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 自定义发送模拟数据
  */
-@AsduType
+@AsduType(typeId = 100)
 public class CustomDeviceCommand extends TotalSummonType {
 
 

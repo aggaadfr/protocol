@@ -19,6 +19,10 @@ import java.net.InetSocketAddress;
 /**
  * 消息处理类 继承netty SimpleChannelInboundHandler自动释放数据
  *
+ * 自定义处理类
+ * 显式地只处理特定类型的消息<ByteBuf>
+ *
+ *
  * @author 修唯xiuwei
  * @version 3.0
  */
@@ -57,7 +61,7 @@ public class Slave104Handle extends SimpleChannelInboundHandler<ByteBuf> {
 	 * 收到消息后将调用
 	 *
 	 * @param ctx
-	 * @param msg 字节缓冲区
+	 * @param msg 字节缓冲区  经过AllCustomDelimiterHandler过滤后的数据
 	 * @throws Exception
 	 */
 	@Override
@@ -67,8 +71,12 @@ public class Slave104Handle extends SimpleChannelInboundHandler<ByteBuf> {
 		log.debug("----------------------------------------------------------------------------------");
 		log.debug("re <= " + DataConvertor.ByteBuf2String(msg));
 		//设置通道传输，并将字节流数据帧转化为相应的APDU指令，将msg封装进asdu实体类，并标识
-		Apdu apdu = apduClass.newInstance().setChannel(ctx.channel()).setIec104Builder(slaverBuilder).setLog(slaverBuilder.getLog()).loadByteBuf(msg);
-		System.out.println("channelRead0-apdu(S I U 格式帧):" + JSON.toJSONString(apdu));
+		Apdu apdu = apduClass.newInstance()
+				.setChannel(ctx.channel())    //记录了该条APDU是在哪条通道里传输的
+				.setIec104Builder(slaverBuilder)
+				.setLog(slaverBuilder.getLog())
+				.loadByteBuf(msg);
+//		System.out.println("channelRead0-apdu(S I U 格式帧):" + JSON.toJSONString(apdu));
 		//接收帧后的应答措施
 		apdu.answer();
 	}
@@ -96,8 +104,8 @@ public class Slave104Handle extends SimpleChannelInboundHandler<ByteBuf> {
 	 */
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		log.debug("通道激活，发出U帧，启动命令");
-		//返回连接此通道的远端地址
+//		log.debug("通道激活，发出U帧，启动命令");
+		//返回连接此通道的远端地址   通过 channel 拿到远程 client ip地址
 		InetSocketAddress ipSocket = (InetSocketAddress) ctx.channel().remoteAddress();
 		String clientIp = ipSocket.getAddress().getHostAddress();
 		//远端端口
@@ -107,17 +115,19 @@ public class Slave104Handle extends SimpleChannelInboundHandler<ByteBuf> {
 			log.info(clientIp + ":" + clientPort + "客户端被过滤链拦截，已关闭通道");
 			return;
 		}
-		log.info(clientIp + ":" + clientPort + "客户端被连接");
+		log.info("slaver连接： " + clientIp + ":" + clientPort + " 客户端被连接");
 		//slave储存104连接
 		LinkContainer.getInstance().getLinks().put(ctx.channel().id(), new Iec104Link(ctx.channel(), clientIp, clientPort, Iec104Link.Role.MASTER, slaverBuilder.getLog()));
-		this.slaverBuilder.connected(ipSocket);
+//		this.slaverBuilder.connected(ipSocket);
+		//添加 channel子通道
 		this.slaverBuilder.getChannels().add(ctx.channel());
+
 		//是否需要启动开始时的应答，slave端不需要发送起始帧
-		if (STARTASK) {
+/*		if (STARTASK) {
 			log.info("从机建立连接，发送起始帧！！！！");
 			//发送建立连接时发送的起始帧
 			ctx.writeAndFlush(Unpooled.copiedBuffer(TechnicalTerm.START));
-		}
+		}*/
 	}
 
 	/**
@@ -133,6 +143,7 @@ public class Slave104Handle extends SimpleChannelInboundHandler<ByteBuf> {
 		String clientIp = ipSocket.getAddress().getHostAddress();
 		Integer clientPort = ipSocket.getPort();
 		log.info(clientIp + ":" + clientPort + "客户端断开连接");
+		//移除不活跃的channel
 		this.slaverBuilder.getChannels().remove(ctx.channel());
 		LinkContainer.getInstance().getLinks().remove(ctx.channel().id());
 		this.slaverBuilder.disconnected(ipSocket);

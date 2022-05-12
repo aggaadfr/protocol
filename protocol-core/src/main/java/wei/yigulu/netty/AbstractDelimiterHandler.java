@@ -16,10 +16,11 @@ import wei.yigulu.utils.DataConvertor;
 /**
  * 自定义 未继承netty的数据帧处理拆包类
  *
+ * 定界符处理
+ *
  * @author 修唯xiuwei
  * @version 3.0
  */
-
 public abstract class AbstractDelimiterHandler extends ChannelInboundHandlerAdapter {
 
 	@Setter
@@ -77,6 +78,7 @@ public abstract class AbstractDelimiterHandler extends ChannelInboundHandlerAdap
 	}
 
 
+	//channelRead 自动返回后，消息不会被释放，将操作转发给ChannelPipeline中的下一个ChannelHandler
 	@Override
 	public abstract void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception;
 
@@ -88,10 +90,11 @@ public abstract class AbstractDelimiterHandler extends ChannelInboundHandlerAdap
 	 * @param from    开始游标
 	 * @param end     结束游标
 	 * @param byteBuf 被检索的ByteBuf
-	 * @param head    头字节数组
+	 * @param head    头字节数组  new byte[]{0x68}
 	 * @return int  返回头所在的位置
 	 */
 	protected int getHeadIndex(int from, int end, ByteBuf byteBuf, byte[] head) {
+		//判断可读字节数是否小于数据的长度
 		if (byteBuf.readableBytes() < head.length) {
 			return -1;
 		}
@@ -128,10 +131,12 @@ public abstract class AbstractDelimiterHandler extends ChannelInboundHandlerAdap
 	 * @param byteBuf 字节缓冲区
 	 */
 	protected void mergeOrFlushByTimeSpan(ByteBuf byteBuf) {
+		//添加一个相当于毫秒数的持续时间
 		if (timeMark.plusMillis(getMaxTimeSpace()).isBeforeNow()) {
 			log.warn("上一帧数据长度不足，但两帧时间间隔较长上一帧被舍弃 舍弃的数据帧为：" + DataConvertor.ByteBuf2String(cumulation));
 			while (!cumulation.release()) {
 			}
+			//开始新帧解析
 			cumulation = byteBuf;
 		} else {
 			//拓展寄居buffer
@@ -145,19 +150,23 @@ public abstract class AbstractDelimiterHandler extends ChannelInboundHandlerAdap
 	 * 否则进行合并
 	 *
 	 * @param byteBuf 字节缓冲区
-	 * @return boolean
+	 * @return true：报文超长
+	 * 		   false：报文没有超长
 	 */
 	protected boolean isOverMaxLength(ByteBuf byteBuf) {
 		if (byteBuf.readableBytes() > getMaxLength()) {
+			//一个个舍弃报文数据
 			while (!cumulation.release()) {
 			}
 			cumulation = null;
 			log.warn("报文超长舍弃");
 			return true;
 		} else {
+			// 一个 字节 一个 字节 的读取
 			if (cumulation == null) {
 				cumulation = byteBuf;
 			} else {
+				// 将字节拼接成一条报文
 				mergeOrFlushByTimeSpan(byteBuf);
 			}
 			return false;
@@ -166,7 +175,7 @@ public abstract class AbstractDelimiterHandler extends ChannelInboundHandlerAdap
 	}
 
 	/**
-	 * 判断两个字节数据是否相等
+	 * 判断两个 字节 数据是否相等
 	 *
 	 * @param b1 b1
 	 * @param b2 b2

@@ -30,7 +30,7 @@ import java.util.List;
 @Accessors(chain = true)
 public abstract class AbstractTcpServerBuilder extends BaseProtocolBuilder {
 
-
+	//注册通道 netyy线程组
 	private EventLoopGroup group;
 
 	private ServerBootstrap serverBootstrap;
@@ -88,7 +88,9 @@ public abstract class AbstractTcpServerBuilder extends BaseProtocolBuilder {
 
 	/**
 	 * null则创建，有则获取获取ChannelInitializer
+	 * 实现该类：自定义初始化通道
 	 *
+	 * 获得master连接器
 	 * @return or create ChannelInitializer
 	 */
 	protected abstract ProtocolChannelInitializer getOrCreateChannelInitializer();
@@ -103,11 +105,11 @@ public abstract class AbstractTcpServerBuilder extends BaseProtocolBuilder {
 		if (this.serverBootstrap == null) {
 			AbstractTcpServerBuilder slaverBuilder = this;
 			this.serverBootstrap = new ServerBootstrap();
-			// 绑定线程池
+			// 绑定线程池  netty线程组  同时处理多个线程的任务
 			this.serverBootstrap.group(getOrCrateLoopGroup())
-					// 指定使用的channel为NioServerSocketChannel
+					// 指定使用的channel为NioServerSocketChannel  使用基于NIO选择器的实现来接受新连接
 					.channel(NioServerSocketChannel.class)
-					// TODO 绑定客户端连接时候触发操作
+					// TODO 绑定客户端连接时候触发操作  用于为Channel的请求提供服务。
 					.childHandler(getOrCreateChannelInitializer());
 			// 绑定监听端口
 			if (this.ip != null) {
@@ -127,6 +129,7 @@ public abstract class AbstractTcpServerBuilder extends BaseProtocolBuilder {
 	protected EventLoopGroup getOrCrateLoopGroup() {
 		if (this.group == null) {
 			//它是一个无限循环（Loop），在循环中不断处理接收到的事件（Event）
+			// 创建netty线程组 同时处理多个线程的任务
 			this.group = new NioEventLoopGroup();
 		}
 		return this.group;

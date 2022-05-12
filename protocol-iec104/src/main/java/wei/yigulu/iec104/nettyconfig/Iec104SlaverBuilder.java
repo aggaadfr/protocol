@@ -25,7 +25,7 @@ public class Iec104SlaverBuilder extends AbstractTcpSlaverBuilder {
 	}
 
 	/**
-	 * 初始化通道
+	 * 初始化通道，监听端口有数据接入后对数据进行处理
 	 * @return
 	 */
 	@Override
@@ -35,10 +35,11 @@ public class Iec104SlaverBuilder extends AbstractTcpSlaverBuilder {
 			//初始化多个Channel上的事件处理
 			@Override
 			protected void initChannel(SocketChannel ch) throws Exception {
+				//定界符处理，处理完后 将操作转发给ChannelPipeline中的下一个ChannelHandler
 				//添加是有顺序的，收到数据是从上往下，发送数据是从下往上
 				//添加组件 数据帧处理拆包类  一个线程执行
 				ch.pipeline().addLast(new AllCustomDelimiterHandler());
-				//添加组件 消息处理类  一个线程执行
+				//添加组件 消息处理类  一个线程执行     this = builder
 				ch.pipeline().addLast(new Slave104Handle((Iec104SlaverBuilder) builder));
 			}
 

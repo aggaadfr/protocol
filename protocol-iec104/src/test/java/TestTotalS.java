@@ -16,6 +16,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+
+/**
+ * @AsduType：会自动扫描该注释的所有类，并加载
+ */
+
 @AsduType
 public class TestTotalS extends TotalSummonType {
 
@@ -60,6 +65,7 @@ public class TestTotalS extends TotalSummonType {
 //				});
 //			}
 //			try {
+				// 多线程发送遥测数据
 //				SendDataFrameHelper.sendYcDataFrame(apdu.getChannel(), booleans, 1, 20, null);
 //			}catch (Exception e){
 //				System.out.println("发送消息错误：" + e.getMessage());

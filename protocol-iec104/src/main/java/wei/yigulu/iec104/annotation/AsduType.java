@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
  *
  * @author xiuwei
  */
+//只能在类、接口、枚举
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 public @interface AsduType {
@@ -24,6 +25,7 @@ public @interface AsduType {
 
 	/**
 	 * Type id int
+	 * 类型标识符
 	 *
 	 * @return the int
 	 */

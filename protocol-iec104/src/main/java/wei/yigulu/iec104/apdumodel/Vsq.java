@@ -13,11 +13,12 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 /**
- * vsq 可变限定词  分为 sq 和 num
+ * 在I帧的第八位
+ * vsq 可变结构限定词  -->  分为 sq 和 num(信息对象的个数最大127)
  * 可变结构限定词  ASDU第一位
- * 该值为二位16进制数  先转成8位二进制
- * 二进制第8位 为0 单一信息元素寻址
- * 二进制第8位 为1 连续信息元素寻址
+ * 		该值为二位16进制数  先转成8位二进制
+ * 		二进制第8位 为0 单一信息元素寻址
+ * 		二进制第8位 为1 连续信息元素寻址
  * 剩下7位转为10进制 数值为信息元素数目
  * @author 修唯xiuwei
  * @version 3.0
@@ -32,6 +33,7 @@ public class Vsq {
 	 */
 	public Vsq readByte(Byte value) {
 		original = value;
+		//转为 二进制
 		String vsqFormat = String.format("%08d", Integer.parseInt(Integer.toBinaryString(this.original & 0xff)));
 		//可变结构限定词，转为二进制后获取第8位
 		sq = Integer.parseInt(vsqFormat.substring(0, 1));

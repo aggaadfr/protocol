@@ -4,7 +4,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelInitializer;
 
 /**
- * modbus 的master  在netty上的通道实现
+ * modbus   在netty上的通道实现
  *
  * @author: xiuwei
  * @version:

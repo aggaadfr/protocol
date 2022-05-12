@@ -40,7 +40,7 @@ public class ServerStartTest {
 					pipeline.addLast(new StringDecoder());
 					//字符串编码器
 					pipeline.addLast(new StringEncoder());
-					//TODO 自定义  消息处理类
+					//TODO 自定义  消息处理类  只是处理string消息并打印，没有做复杂的逻辑处理
 					pipeline.addLast(new ServerHandler4());
 				}
 			});
@@ -73,6 +73,7 @@ public class ServerStartTest {
 
 /**
  * 自定义处理类
+ * 显式地只处理特定类型的消息<String>
  */
 class ServerHandler4 extends SimpleChannelInboundHandler<String> {
 

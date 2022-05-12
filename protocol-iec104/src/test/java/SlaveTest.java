@@ -5,7 +5,7 @@ import java.net.InetSocketAddress;
 import java.util.Random;
 
 /**
- * 客户端启动测试
+ * slave启动
  *
  * @author: xiuwei
  * @version:

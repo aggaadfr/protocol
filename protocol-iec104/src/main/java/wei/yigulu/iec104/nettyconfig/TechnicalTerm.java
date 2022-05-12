@@ -9,32 +9,35 @@ package wei.yigulu.iec104.nettyconfig;
 public class TechnicalTerm {
 
 	/**
+	 * START
 	 * 建立连接时发送的起始帧
+	 * 启动帧
 	 */
 	public static byte[] START = new byte[]{0x68, 0x04, 0x07, 0x00, 0x00, 0x00};
 
 	/**
+	 * STARTBACK  start确认
 	 * 建立连接时对起始帧的应答
 	 */
 	public static byte[] STARTBACK = new byte[]{0x68, 0x04, 0x0B, 0x00, 0x00, 0x00};
 
 	/**
-	 * STOP
+	 * STOP   stop生效
 	 */
 	public static byte[] STOP = new byte[]{0x68, 0x04, 0x13, 0x00, 0x00, 0x00};
 
 	/**
-	 * STOPBACK
+	 * STOPBACK   stop确认
 	 */
 	public static byte[] STOPBACK = new byte[]{0x68, 0x04, 0x23, 0x00, 0x00, 0x00};
 
 	/**
-	 * TEST
+	 * TEST   test生效
 	 */
 	public static byte[] TEST = new byte[]{0x68, 0x04, 0x43, 0x00, 0x00, 0x00};
 
 	/**
-	 * TESTBACK
+	 * TESTBACK   test确认
 	 */
 	public static byte[] TESTBACK = new byte[]{0x68, 0x04, (byte) 0x83, 0x00, 0x00, 0x00};
 

@@ -41,6 +41,7 @@ public class AsduTypeAnnotationContainer {
 		return AsduTypeAnnotationContainer.LazyHolder.INSTANCE;
 	}
 
+	//<TYPEID, (类, loadByteBuf方法)>
 	private Map<Integer, DataTypeClasses> dataTypes = null;
 
 	/**
@@ -58,6 +59,7 @@ public class AsduTypeAnnotationContainer {
 
 	/**
 	 * 获取继承类的TYPEID的属性名
+	 * 类型标识符
 	 */
 	private static final String TYPEIDATTRIBUTENAME = "TYPEID";
 
@@ -81,9 +83,13 @@ public class AsduTypeAnnotationContainer {
 	 */
 	public Map<Integer, DataTypeClasses> getDataTypes() throws Iec104Exception {
 		if (this.dataTypes == null) {
+			//扫描该目录下
 			Reflections f = new Reflections(DATAFRAMEPAKAGENAME);
+			//只要是继承 AbstractDataFrameType 这个类的
 			Set<Class<? extends AbstractDataFrameType>> set = f.getSubTypesOf(AbstractDataFrameType.class);
+			//扫描所有包
 			Reflections f1 = new Reflections(DATAFRAMEPAKAGENAME1);
+			//只要使用了AsduType这个注释的
 			Set<Class<?>> set1 = f1.getTypesAnnotatedWith(AsduType.class);
 			Field check;
 			Method load;
@@ -109,6 +115,7 @@ public class AsduTypeAnnotationContainer {
 						typeId = c.getAnnotation(AsduType.class).typeId();
 					}
 					load = c.getMethod(LOADMETHODNAME, ByteBuf.class, Vsq.class);
+					//暴力开启
 					load.setAccessible(true);
 					dataTypes.put(check.getInt(null), new DataTypeClasses(c, typeId, load));
 

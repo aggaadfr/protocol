@@ -12,7 +12,7 @@ import java.util.List;
  * @version:
  */
 public class ConnectFilterManager {
-
+	//通道channel
 	private List<ConnectFilter> filters = new ArrayList<>();
 
 	public void appendFilter(ConnectFilter connectFilter) {
@@ -26,7 +26,8 @@ public class ConnectFilterManager {
 	/**
 	 * 判断该连接是否通过判断链
 	 *
-	 * @return true  允许通过  false  不允许通过
+	 * @return true  允许通过
+	 * 			false  不允许通过
 	 */
 	public boolean verdict(Channel channel) {
 		if (this.filters.size() == 0) {

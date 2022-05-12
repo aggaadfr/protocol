@@ -86,11 +86,14 @@ public class SendAndReceiveNumUtil {
 	 * @param channelId channel id
 	 */
 	public static void receiveIFrame(Apdu apdu, ChannelId channelId) {
+		// 从所有连接中获取指定id channel
 		Iec104Link link = LinkContainer.getInstance().getLink(channelId);
 		int send = link.getISend();
 		int receive = link.getIReceive();
+
 		int send1 = apdu.getSendSeqNum();
 		int receive1 = apdu.getReceiveSeqNum();
+
 		link.setLinkState(Iec104Link.LinkState.NORMAL);
 		if (receive < send1) {
 			/**

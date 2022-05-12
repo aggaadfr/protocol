@@ -4,6 +4,8 @@ import wei.yigulu.iec104.util.SendCommandHelper;
 import java.util.Random;
 
 /**
+ * Master发送指令测试
+ *
  * @author: xiuwei
  * @version:
  */

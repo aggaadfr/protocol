@@ -13,6 +13,7 @@ public class Main {
 
     private static void testServer()throws Exception{
         Iec104SlaverBuilder slaverBuilder = new Iec104SlaverBuilder(2404);
+		// 过滤连接 port 大于30000的通道不允许连接
 		slaverBuilder.getConnectFilterManager().appendFilter((c) -> {
 			if (slaverBuilder.getChannels().size() >= 1) {
 				return -1;

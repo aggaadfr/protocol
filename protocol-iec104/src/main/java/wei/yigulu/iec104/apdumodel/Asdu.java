@@ -147,8 +147,9 @@ public class Asdu<T extends AbstractDataFrameType> {
 		byte[] commAddress = new byte[2];
 		dataInputStream.readBytes(commAddress);
 		commonAddress = commAddress[0] + ((commAddress[1] & 0xff) << 8);
-		//信息体
+		//信息体 类型无法超过128种
 		if (typeId < 128) {
+			//动态加载、扫描 APDU 类
 			Map<Integer, DataTypeClasses> map = AsduTypeAnnotationContainer.getInstance().getDataTypes();
 			if (map.containsKey(typeId)) {
 				this.setDataFrame((T) map.get(typeId).getTypeClass().newInstance());

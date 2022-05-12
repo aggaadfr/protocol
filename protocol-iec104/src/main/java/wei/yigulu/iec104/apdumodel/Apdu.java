@@ -23,6 +23,7 @@ import java.util.List;
 /**
  * 104协议内核处理类
  * 104信息体模型类
+ *
  * 消息分为 S I U 格式帧
  * I格式帧具有ASDU消息体
  *
@@ -108,26 +109,28 @@ public class Apdu {
 	/**
 	 * TODO 读取字节流 将数据帧转化为APDU(包含asdu消息实体)
 	 *
-	 * @param dis 字节缓冲区
-	 * @return apdu
+	 * @param master端发过来的报文 dis 16进制的报文数据
+	 * @return apdu （APCI + ASDU）
 	 * @throws Exception exception
 	 */
 	public Apdu loadByteBuf(ByteBuf dis) throws Exception {
 		this.channel = channel;
-		int start = dis.readByte() & 0xff;
+		int start = dis.readByte() & 0xff;       //获取一位字节
 		int len = dis.readByte() & 0xff;
-		log.debug("APDU长度：" + len);
+		log.debug("该条报文的(APDU)长度为：" + len);
+		// 4位的控制域数据
 		byte[] controlFields = new byte[4];
 		if (start != 0x68) {
 			new Iec104Exception("起始字符错误" + start);
-		} else if (len < 4 || len > 253) {
+		} else if (len < 4 || len > 253) {    //长度限制  一条104报文最大长度为253
 			new Iec104Exception("帧长度有误" + len);
 		} else {
 			//读4字节控制域
 			dis.readBytes(controlFields);
-			//第一比特=0  ===》I格式
-			if ((controlFields[0] & 0x01) == 0) {
-				//I帧
+			//通过控制域来判断是属于哪一中类型的帧
+			if ((controlFields[0] & 0x01) == 0) {  //第0位和1取余   D0位为0时，代表是I帧
+				//TODO 如果收到master的是 I 帧，则发送回去一个 I 帧确认帧
+				//I帧    必定大于6位，是信息帧
 				this.apciType = ApciType.I_FORMAT;
 				//发送序列号  先是最低有效位 ，接下来是最高有效位,最高有效位拿到后面，最低有效位后面补0，LSB 0;MSB
 				sendSeqNum = ((controlFields[0] & 0xfe) >> 1) + ((controlFields[1] & 0xff) << 7);
@@ -135,16 +138,17 @@ public class Apdu {
 				receiveSeqNum = ((controlFields[2] & 0xfe) >> 1) + ((controlFields[3] & 0xff) << 7);
 				log.debug("I帧，发送序列号：" + sendSeqNum + "，接收序列号：" + receiveSeqNum);
 				if (this.channel != null) {
+					// 额外单独发送一条 U帧，测试确认帧
 					SendAndReceiveNumUtil.receiveIFrame(this, this.channel.id());
 				}
 				//第一比特=1  第二比特=0 ===》S格式
-			} else if ((controlFields[0] & 0x03) == 1) {
+			} else if ((controlFields[0] & 0x03) == 1) {   //D0位为1时，代表为U帧
 				//S帧
 				this.apciType = ApciType.S_FORMAT;
 				receiveSeqNum = ((controlFields[2] & 0xfe) >> 1) + ((controlFields[3] & 0xff) << 7);
 				log.debug("S帧，接收序列号：" + receiveSeqNum);
 				//第一比特=1  第二比特=1 ===》S格式
-			} else if ((controlFields[0] & 0x03) == 3) {
+			} else if ((controlFields[0] & 0x03) == 3) {   //D1和D0都为1时，代表为S帧
 				//U帧
 				switch (controlFields[0]) {
 					case 0x07:
@@ -176,8 +180,9 @@ public class Apdu {
 						break;
 				}
 			}
-			//构建数据单元
+			//构建消息数据单元，总召属于 I 帧
 			if (len > 6) {
+				// 在apdu中构建 asdu 的消息体
 				this.asdu = new Asdu().setLog(log).loadByteBuf(dis);
 			}
 		}
@@ -246,7 +251,7 @@ public class Apdu {
 	 */
 	public void answer() throws Iec104Exception {
 		byte[][] bb = new byte[0][];
-		//I帧
+		//slave发送 I帧 相应数据
 		if (this.apciType == ApciType.I_FORMAT) {
 			try {
 				//TODO 发送数据I帧相应策略数据，会根据master端发过来的Asdu进行相应的handleAndAnswer应答
@@ -259,11 +264,11 @@ public class Apdu {
 				log.error("数据帧解析后的逻辑处理出现异常", e);
 				//throw new Iec104Exception("I帧响应帧编译出错");
 			}
-			//s帧  测试帧  没做处理，丢失，异常，重复的情况
 		} else if (this.apciType == ApciType.S_FORMAT) {
+			//s帧  测试帧  没做处理，丢失，异常，重复的情况
 			bb = sHandleAndAnswer();
-			//u帧
 		} else {
+			//u帧
 			bb = uHandleAndAnswer();
 		}
 		//创建复合缓冲区
