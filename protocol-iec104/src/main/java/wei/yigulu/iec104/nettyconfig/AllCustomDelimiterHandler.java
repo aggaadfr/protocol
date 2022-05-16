@@ -45,7 +45,7 @@ public class AllCustomDelimiterHandler extends AbstractDelimiterHandler {
 	 */
 	@Override
 	public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
-		System.out.println("AllCustomDelimiterHandler channelRead---接入数据:" + JSON.toJSONString(msg));
+//		System.out.println("AllCustomDelimiterHandler channelRead---接入数据:" + JSON.toJSONString(msg));
 		//判断写入报文是否超过最大长度，并把数据写入缓存内容   byte[]
 		//cumulation = msg
 		if (isOverMaxLength((ByteBuf) msg)) {

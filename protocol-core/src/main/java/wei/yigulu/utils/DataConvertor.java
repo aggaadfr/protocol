@@ -6,7 +6,7 @@ import io.netty.util.ReferenceCountUtil;
 import java.util.Formatter;
 
 /**
- * 对支付串的处理工具
+ * 对字符串的处理工具
  *
  * 数据转换器
  *

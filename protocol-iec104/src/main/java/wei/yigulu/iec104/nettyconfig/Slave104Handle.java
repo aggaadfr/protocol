@@ -66,10 +66,10 @@ public class Slave104Handle extends SimpleChannelInboundHandler<ByteBuf> {
 	 */
 	@Override
 	public void channelRead0(ChannelHandlerContext ctx, ByteBuf msg) throws Exception {
-		System.out.println("channelRead222: slave消息处理" + JSON.toJSONString(msg));
+//		System.out.println("Slave104Handle: channelRead0消息处理" + JSON.toJSONString(msg));
 		//收数据
 		log.debug("----------------------------------------------------------------------------------");
-		log.debug("re <= " + DataConvertor.ByteBuf2String(msg));
+		log.debug("re <= 接收到master端报文" + DataConvertor.ByteBuf2String(msg));
 		//设置通道传输，并将字节流数据帧转化为相应的APDU指令，将msg封装进asdu实体类，并标识
 		Apdu apdu = apduClass.newInstance()
 				.setChannel(ctx.channel())    //记录了该条APDU是在哪条通道里传输的

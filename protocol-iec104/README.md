@@ -137,3 +137,85 @@ for (Channel channel : slaverBuilder.getChannels()) {
 
 ##### 更加深入的应用请研究代码  apdu asdu 和各个类型的报文帧  都支持重写，包括拆包工具也支持重写，如果有疑问可以向 weiyigulu524710549@gmail.com  邮箱留言
 
+
+
+# 代码分析
+
+## Slave端
+
+### 启动Slave
+
+Iec104SlaverBuilder slaverBuilder = new Iec104SlaverBuilder(2404);
+
+1. 初始化  AbstractTcpServerBuilder
+
+2. 服务器异步创建绑定 getOrCrateServerBootstrap  
+
+   1. 绑定类型：NioEventLoopGroup
+   2. getOrCreateChannelInitializer   需要实现自定义监听数据方法
+      1. new AllCustomDelimiterHandler()  校验报文格式，报文长度，报文完整性
+      2. new Slave104Handle     104报文处理类
+
+3. 创建一个Apdu应用规约数据单元，Apdu包含(APCI和ASDU)，将收到的消息交给Apdu解析
+
+4. 根据控制域报文特点来确认报文是：I、U、S帧
+
+   1. 如果是 I帧 额外单独发送一条 U帧，测试确认帧
+   2. 如果报文的长度大于6，则需要解析 I帧 ，并发送相关数据给master
+
+5. 根据类型标识符，反射获取对应的处理类  loadByteBuf
+
+6. 使用 SendDataFrameHelper 发送数据工具类发送相关的回应数据
+
+   
+
+
+
+## Master端
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -16,6 +16,7 @@ import wei.yigulu.iec104.exception.Iec104Exception;
 import wei.yigulu.iec104.nettyconfig.TechnicalTerm;
 import wei.yigulu.iec104.util.SendAndReceiveNumUtil;
 import wei.yigulu.netty.BaseProtocolBuilder;
+import wei.yigulu.utils.DataConvertor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,15 +110,15 @@ public class Apdu {
 	/**
 	 * TODO 读取字节流 将数据帧转化为APDU(包含asdu消息实体)
 	 *
-	 * @param master端发过来的报文 dis 16进制的报文数据
+	 * @param  dis  master端发过来的报文   16进制的报文数据
 	 * @return apdu （APCI + ASDU）
 	 * @throws Exception exception
 	 */
 	public Apdu loadByteBuf(ByteBuf dis) throws Exception {
 		this.channel = channel;
 		int start = dis.readByte() & 0xff;       //获取一位字节
-		int len = dis.readByte() & 0xff;
-		log.debug("该条报文的(APDU)长度为：" + len);
+		int len = dis.readByte() & 0xff;      //第二位报文长度？
+//		log.debug("该条报文的(APDU)长度为：" + len);
 		// 4位的控制域数据
 		byte[] controlFields = new byte[4];
 		if (start != 0x68) {
@@ -138,7 +139,7 @@ public class Apdu {
 				receiveSeqNum = ((controlFields[2] & 0xfe) >> 1) + ((controlFields[3] & 0xff) << 7);
 				log.debug("I帧，发送序列号：" + sendSeqNum + "，接收序列号：" + receiveSeqNum);
 				if (this.channel != null) {
-					// 额外单独发送一条 U帧，测试确认帧
+					// slave端收到master的I帧后，首先发送一条S帧
 					SendAndReceiveNumUtil.receiveIFrame(this, this.channel.id());
 				}
 				//第一比特=1  第二比特=0 ===》S格式
@@ -250,11 +251,13 @@ public class Apdu {
 	 * @throws Iec104Exception iec exception
 	 */
 	public void answer() throws Iec104Exception {
-		byte[][] bb = new byte[0][];
+//		byte[][] bb = new byte[0][];
+		byte[][] bb = null;
 		//slave发送 I帧 相应数据
 		if (this.apciType == ApciType.I_FORMAT) {
 			try {
 				//TODO 发送数据I帧相应策略数据，会根据master端发过来的Asdu进行相应的handleAndAnswer应答
+				// 如果是I帧，调用asdu中的 handleAndAnswer 方法发送数据
 				bb = this.asdu.getDataFrame().handleAndAnswer(this);
 			} catch (Exception e) {
 				if (e instanceof NullPointerException) {
@@ -277,6 +280,7 @@ public class Apdu {
 			for (byte[] b : bb) {
 				//写入缓冲区
 				buffer.writeBytes(b);
+				log.debug("向104对端发出数据帧============：" + DataConvertor.Byte2String(b));
 			}
 		}
 		//发送数据出去

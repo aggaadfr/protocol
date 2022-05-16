@@ -69,6 +69,12 @@ public abstract class AbstractTcpServerBuilder extends BaseProtocolBuilder {
 		this.port = port;
 	}
 
+
+	public AbstractTcpServerBuilder(String ip,int port) {
+		this.ip = ip;
+		this.port = port;
+	}
+
 	/**
 	 * 创建104 slave 监听
 	 *

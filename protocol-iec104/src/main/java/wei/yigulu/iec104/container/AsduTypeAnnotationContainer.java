@@ -97,7 +97,7 @@ public class AsduTypeAnnotationContainer {
 			int typeId;
 			try {
 				for (Class<?> c : set) {
-					log.debug("扫描到APDU处理类" + c.getSimpleName());
+//					log.debug("扫描到APDU处理类" + c.getSimpleName());
 					try {
 						check = c.getField(TYPEIDATTRIBUTENAME);
 						load = c.getMethod(LOADMETHODNAME, ByteBuf.class, Vsq.class);
@@ -108,7 +108,7 @@ public class AsduTypeAnnotationContainer {
 					}
 				}
 				for (Class<?> c : set1) {
-					log.debug("扫描到APDU处理类" + c.getSimpleName());
+//					log.debug("扫描到APDU处理类" + c.getSimpleName());
 					check = c.getField(TYPEIDATTRIBUTENAME);
 					typeId = check.getInt(null);
 					if (c.getAnnotation(AsduType.class).typeId() != 0) {

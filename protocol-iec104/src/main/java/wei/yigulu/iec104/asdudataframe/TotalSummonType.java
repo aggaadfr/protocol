@@ -26,7 +26,7 @@ import java.util.List;
 public class TotalSummonType extends AbstractDataFrameType {
 
 	/**
-	 * TYPEID
+	 * TYPEID  默认100
 	 */
 	public static final int TYPEID = TechnicalTerm.TOTAL_SUMMONTYPE_TYPE;
 	private InformationBodyAddress address = new InformationBodyAddress(20);
@@ -39,6 +39,11 @@ public class TotalSummonType extends AbstractDataFrameType {
 		buffer.add((byte) value);
 	}
 
+	/**
+	 * 总召激活确认
+	 *
+	 * @return
+	 */
 	@Override
 	public Asdu generateBack() {
 		Asdu asdu = new Asdu();

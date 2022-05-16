@@ -141,19 +141,25 @@ public class Asdu<T extends AbstractDataFrameType> {
 		//获取类型表示配置文件
 		this.typeId = dataInputStream.readByte() & 0xff;
 		vsq = new Vsq().readByte(dataInputStream.readByte());
+		//传送原因 cot和originatorAddress
 		cot = new Cot().readByte(dataInputStream.readByte());
 		originatorAddress = dataInputStream.readByte();
 		//公共地址
 		byte[] commAddress = new byte[2];
 		dataInputStream.readBytes(commAddress);
+		// 二进制转 int
 		commonAddress = commAddress[0] + ((commAddress[1] & 0xff) << 8);
 		//信息体 类型无法超过128种
 		if (typeId < 128) {
 			//动态加载、扫描 APDU 类
 			Map<Integer, DataTypeClasses> map = AsduTypeAnnotationContainer.getInstance().getDataTypes();
+			//扫描的类中有该
 			if (map.containsKey(typeId)) {
+				// 设置泛型的类
 				this.setDataFrame((T) map.get(typeId).getTypeClass().newInstance());
 				Method load = map.get(typeId).getLoad();
+				// 反射获取泛型类的方法，并传入参数 (dataInputStream, getVsq)
+				// 反射的是  loadByteBuf(ByteBuf is, Vsq vsq) 方法
 				load.invoke(dataFrame, dataInputStream, this.getVsq());
 			} else {
 				byte[] unknown = new byte[dataInputStream.readableBytes()];
@@ -162,11 +168,11 @@ public class Asdu<T extends AbstractDataFrameType> {
 				log.error("无法转换信息对象，由于类型标识未知: " + typeId);
 			}
 			if (dataFrame != null) {
-				log.debug(dataFrame.toString());
+				log.debug("dataFrame类型为>>>>>>>>>>>>>" + dataFrame.toString());
 			}
 			privateInformation = null;
 		} else {
-			log.debug("");
+			log.debug("无法解析的类型");
 		}
 		return this;
 	}
@@ -185,9 +191,8 @@ public class Asdu<T extends AbstractDataFrameType> {
 		cot.encode(buffer);
 
 		buffer.add((byte) originatorAddress);
-
+		// 消息体中转换 公共地址  int -》 2位  0x十六进制数
 		buffer.add((byte) commonAddress);
-
 		buffer.add((byte) (commonAddress >> 8));
 
 		dataFrame.encode(buffer);

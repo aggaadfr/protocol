@@ -54,6 +54,7 @@ public class InformationBodyAddress {
 
 	/**
 	 * Encode *
+	 * 格式化信息体地址
 	 *
 	 * @param buffer buffer
 	 */

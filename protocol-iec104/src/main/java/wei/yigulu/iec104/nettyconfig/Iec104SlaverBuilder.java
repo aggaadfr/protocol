@@ -24,6 +24,10 @@ public class Iec104SlaverBuilder extends AbstractTcpSlaverBuilder {
 		super(port);
 	}
 
+	public Iec104SlaverBuilder(String ip, int port) {
+		super(ip, port);
+	}
+
 	/**
 	 * 初始化通道，监听端口有数据接入后对数据进行处理
 	 * @return

@@ -104,7 +104,7 @@ public class Master104Handle extends SimpleChannelInboundHandler<ByteBuf> {
 	 */
 	@Override
 	public void channelActive(ChannelHandlerContext ctx) throws Exception {
-		log.debug("发出U帧，启动命令");
+//		log.debug("发出U帧，启动命令");
 		this.isInitiative = false;
 		//获得slave连接
 		InetSocketAddress ipSocket = (InetSocketAddress) ctx.channel().remoteAddress();

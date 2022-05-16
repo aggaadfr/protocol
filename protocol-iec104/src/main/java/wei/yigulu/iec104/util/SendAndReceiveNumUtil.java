@@ -39,9 +39,13 @@ public class SendAndReceiveNumUtil {
 		Iec104Link link = LinkContainer.getInstance().getLink(channelId);
 		int send = link.getISend();
 		int receive = link.getIReceive();
+		// 发送次数+1
 		apdu.setSendSeqNum(send++);
+		// 接收次数不变
 		apdu.setReceiveSeqNum(receive);
+		// 重新设置通道的发送 id
 		link.setISend(send);
+		// 重新放回通道
 		LinkContainer.getInstance().getLinks().put(channelId, link);
 	}
 
@@ -69,6 +73,7 @@ public class SendAndReceiveNumUtil {
 	 * @throws Exception exception
 	 */
 	public static void sendIFrame(Apdu apdu, Channel channel, Logger log) throws Exception {
+		// 为发送的i帧组装接收和发送序号
 		setSendAndReceiveNum(apdu, channel.id());
 		byte[] bb = apdu.encode();
 		if (log != null) {
@@ -109,6 +114,7 @@ public class SendAndReceiveNumUtil {
 			apdu.loseSend();
 			link.setLinkState(Iec104Link.LinkState.LOSESEND);
 		}
+		// 增加接收序号
 		link.setIReceive(++send1);
 		link.setISend(receive1);
 		sendSFrame(link);
@@ -129,7 +135,7 @@ public class SendAndReceiveNumUtil {
 			try {
 				byte[] bs = apdu1.encode();
 				//TODO  改变日志模式
-				link.getLog().debug("发送s帧：" + DataConvertor.Byte2String(bs));
+				link.getLog().debug("发送s帧确认帧：" + DataConvertor.Byte2String(bs));
 				link.getChannel().writeAndFlush(Unpooled.copiedBuffer(bs));
 			} catch (Exception e) {
 				e.printStackTrace();

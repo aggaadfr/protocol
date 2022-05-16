@@ -126,9 +126,10 @@ public class BooleanType extends AbstractDataFrameType {
 	@Override
 	public Asdu generateBack() {
 		Asdu asdu = new Asdu();
-		asdu.setTypeId(1);
+		asdu.setTypeId(1);   // typeId = 1 为单点遥信
 		asdu.setDataFrame(this);
 		asdu.getVsq().setSq(this.addresses.size() == 1 ? 1 : 0);
+		// 信息体元素地址数量
 		asdu.getVsq().setNum(this.datas.size());
 		asdu.setOriginatorAddress(0);
 		asdu.setCommonAddress(1);

@@ -116,6 +116,11 @@ public class TechnicalTerm {
 
 
 	/**
+	 * 电镀召唤
+	 */
+	public static final Integer ELECTROPLATE_TYPE = 0x65;
+
+	/**
 	 * 设置短浮点命令
 	 */
 	public static final Integer SHORT_FLOAT_COMMAND_TYPE = 0x32;

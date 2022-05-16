@@ -28,7 +28,7 @@ import java.util.concurrent.TimeUnit;
 /**
  * 自定义发送模拟数据
  */
-@AsduType(typeId = 100)
+//@AsduType(typeId = 100)
 public class CustomDeviceCommand extends TotalSummonType {
 
 
@@ -103,5 +103,6 @@ public class CustomDeviceCommand extends TotalSummonType {
 		BigDecimal cha = new BigDecimal(Math.random() * (max-min) + min);
 		return cha.setScale(scale,BigDecimal.ROUND_HALF_UP);//保留 scale 位小数，并四舍五入
 	}
+
 
 }

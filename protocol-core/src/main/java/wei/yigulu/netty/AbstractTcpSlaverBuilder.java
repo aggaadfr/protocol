@@ -20,4 +20,8 @@ public abstract class AbstractTcpSlaverBuilder extends AbstractTcpServerBuilder 
 	public AbstractTcpSlaverBuilder(int port) {
 		super(port);
 	}
+
+	public AbstractTcpSlaverBuilder(String ip, int port) {
+		super(ip, port);
+	}
 }
