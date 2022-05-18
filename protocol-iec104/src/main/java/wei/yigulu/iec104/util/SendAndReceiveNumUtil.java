@@ -40,7 +40,7 @@ public class SendAndReceiveNumUtil {
 		int send = link.getISend();
 		int receive = link.getIReceive();
 		// 发送次数+1
-		apdu.setSendSeqNum(send++);
+		apdu.setSendSeqNum(++send);
 		// 接收次数不变
 		apdu.setReceiveSeqNum(receive);
 		// 重新设置通道的发送 id

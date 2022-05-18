@@ -12,6 +12,7 @@ import wei.yigulu.iec104.asdudataframe.typemodel.InformationBodyAddress;
 import wei.yigulu.iec104.asdudataframe.typemodel.container.Iec104Link;
 import wei.yigulu.iec104.asdudataframe.typemodel.container.LinkContainer;
 import wei.yigulu.iec104.exception.Iec104Exception;
+import wei.yigulu.iec104.util.SendAndReceiveNumUtil;
 import wei.yigulu.iec104.util.SendDataFrameHelper;
 import wei.yigulu.utils.DataConvertor;
 
@@ -106,23 +107,20 @@ public class CustomTotalSummon extends TotalSummonType {
 
         // TODO 5、结束总召唤帧
         // 更新发送序号
+        SendAndReceiveNumUtil.setSendAndReceiveNum(apdu, channel.id());
+
         Iec104Link link = LinkContainer.getInstance().getLink(channel.id());
         int send = link.getISend();
         int receive = link.getIReceive();
-        // 发送次数+1
-        apdu.setSendSeqNum(send++);
-        // 接收次数不变
-        apdu.setReceiveSeqNum(receive);
-        // 重新设置通道的发送 id
-        link.setISend(send);
-        // 重新放回通道
-        LinkContainer.getInstance().getLinks().put(channel.id(), link);
-
 
         byte sendSeqNum1 = (byte) (send << 1);
         byte sendSeqNum2 = (byte) (send >> 7);
         byte receiveSeqNum1 = (byte) (receive << 1);
         byte receiveSeqNum2 = (byte) (receive >> 7);
+
+//        log.info("结束总召唤帧的send》》》》》》》》》》》》》》》》》 " + send );
+
+
 
         byte[][] result = new byte[1][];
         // 68 （启动符） 0E（长度）08  00 （发送序号，2个字节）02  00（接收序号，2个字节）  64  （类型标识）01 （可变结构限定词）0A  00 （传送原因，2个字节） 01  00 （公共地址，即RTU站址，2个字节） 00  00  00（信息体地址，3个字节）  14（QOI）

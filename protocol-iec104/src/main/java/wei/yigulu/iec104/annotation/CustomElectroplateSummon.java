@@ -6,6 +6,7 @@ import wei.yigulu.iec104.apdumodel.Apdu;
 import wei.yigulu.iec104.asdudataframe.CustomElectroplateSummonType;
 import wei.yigulu.iec104.asdudataframe.typemodel.container.Iec104Link;
 import wei.yigulu.iec104.asdudataframe.typemodel.container.LinkContainer;
+import wei.yigulu.iec104.util.SendAndReceiveNumUtil;
 import wei.yigulu.iec104.util.SendDataFrameHelper;
 
 import java.util.HashMap;
@@ -59,23 +60,19 @@ public class CustomElectroplateSummon extends CustomElectroplateSummonType {
         }
 
         // TODO 3、结束总召唤帧
+        // 更新发送序号
+        SendAndReceiveNumUtil.setSendAndReceiveNum(apdu, channel.id());
+
+        // 拿到更新序号并转成byte
         Iec104Link link = LinkContainer.getInstance().getLink(channel.id());
         int send = link.getISend();
         int receive = link.getIReceive();
-        // 发送次数+1
-        apdu.setSendSeqNum(send++);
-        // 接收次数不变
-        apdu.setReceiveSeqNum(receive);
-        // 重新设置通道的发送 id
-        link.setISend(send);
-        // 重新放回通道
-        LinkContainer.getInstance().getLinks().put(channel.id(), link);
-
 
         byte sendSeqNum1 = (byte) (send << 1);
         byte sendSeqNum2 = (byte) (send >> 7);
         byte receiveSeqNum1 = (byte) (receive << 1);
         byte receiveSeqNum2 = (byte) (receive >> 7);
+
 
         byte[][] result = new byte[1][];
         // 68（启动符）0E（长度）14  00（发送序号）06  00（接收序号）65（类型标示）01（可变结构限定词）0A  00（传输原因）01  00（公共地址）00 00 00（信息体地址）45（QCC）
@@ -83,6 +80,6 @@ public class CustomElectroplateSummon extends CustomElectroplateSummonType {
 //        byte commonAddress2 = (byte) (commonAddress >> 8);
         result[0] = new byte[]{0x68, 0x0e, sendSeqNum1, sendSeqNum2, receiveSeqNum1, receiveSeqNum2, 0x65, 0x01, 0x0a, 0x00, 0x01, 0x00, 0x00, 0x00, 0x00, 0x45};
 
-        return null;
+        return result;
     }
 }

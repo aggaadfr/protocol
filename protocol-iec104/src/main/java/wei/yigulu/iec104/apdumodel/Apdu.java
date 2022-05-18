@@ -280,7 +280,7 @@ public class Apdu {
 			for (byte[] b : bb) {
 				//写入缓冲区
 				buffer.writeBytes(b);
-				log.debug("向104对端发出数据帧============：" + DataConvertor.Byte2String(b));
+				log.debug("向104对端发出数据帧======return======：" + DataConvertor.Byte2String(b));
 			}
 		}
 		//发送数据出去

@@ -28,6 +28,9 @@ public class IeProofreadTime {
 
 	private static final DateTimeFormatter FORMATTER = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss:SSS");
 
+	private byte[] timesBy16;
+
+
 	/**
 	 * Ie proofread time
 	 *
@@ -39,6 +42,7 @@ public class IeProofreadTime {
 		}
 		byte[] btime = new byte[7];
 		is.readBytes(btime);
+		timesBy16 = btime;
 		int milliSecond = (btime[0] & 0xff) + ((btime[1] & 0xff) << 8);
 		int minute = btime[2] & 0xff;
 		int hour = btime[3] & 0xff;
@@ -48,14 +52,13 @@ public class IeProofreadTime {
 		String s = "20" + String.format("%02d", year) + "-" + String.format("%02d", month) + "-" + String.format("%02d", day) + " "
 				+ String.format("%02d", hour) + ":" + String.format("%02d", minute) + ":" + String.format("%02d", milliSecond / 1000) + ":" +
 				String.format("%02d", milliSecond % 1000);
-		System.out.println("IeProofreadTime-IeProofreadTime:" + s);
+		System.out.println("对时报文解析为IeProofreadTime-IeProofreadTime》》》》》》 " + s);
 		try {
 			time = FORMATTER.parseDateTime(s);
 		}catch (Exception e){
 			time = new DateTime();
 			System.out.println("IeProofreadTime-IeProofreadTime-----:" + time.toString());
 		}
-
 	}
 
 	/**
