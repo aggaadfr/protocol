@@ -27,176 +27,176 @@ import java.util.Map;
 @NoArgsConstructor
 public class Asdu<T extends AbstractDataFrameType> {
 
-	@Accessors(chain = true)
-	private Logger log = LoggerFactory.getLogger(this.getClass());
+    @Accessors(chain = true)
+    private Logger log = LoggerFactory.getLogger(this.getClass());
 
-	/**
-	 * 位于该帧的第六位 ASDU第一位
-	 * 应用数据单元类型
-	 * 列举几个常用的type
-	 * 表1 在监视方向的报文类型
-	 * 1     ：= 单点信息                           M_SP_NA_1
-	 * 3     ：= 双点信息                           M_DP_NA_1
-	 * 9    ：= 测量值, 规一化值                    M_ME_NA_1
-	 * 13    ：= 测量值, 短浮点数                    M_ME_NC_1
-	 * 30    ：= 带CP56Time2a时标的单点信息          M_SP_TB_1
-	 * 31    ：= 带CP56Time2a时标的双点信息          M_DP_TB_1
-	 * 在控制方向的系统命令
-	 * 100：= 总召唤命令                           C_IC_NA_1
-	 */
-	protected int typeId;
-
-
-	/**
-	 * 位于该帧的第七位  asdu的第二位
-	 * vsq 可变限定词  分为 sq 和 num
-	 * 可变结构限定词  ASDU第一位
-	 * 该值为二位16进制数  先转成8位二进制
-	 * 二进制第8位 为0顺序信息元素寻址
-	 * 二进制第8位 为1 单一信息元素寻址
-	 * 剩下7位转为10进制 数值为信息元素数目
-	 */
-	protected Vsq vsq = new Vsq();
+    /**
+     * 位于该帧的第六位 ASDU第一位
+     * 应用数据单元类型
+     * 列举几个常用的type
+     * 表1 在监视方向的报文类型
+     * 1     ：= 单点信息                           M_SP_NA_1
+     * 3     ：= 双点信息                           M_DP_NA_1
+     * 9    ：= 测量值, 规一化值                    M_ME_NA_1
+     * 13    ：= 测量值, 短浮点数                    M_ME_NC_1
+     * 30    ：= 带CP56Time2a时标的单点信息          M_SP_TB_1
+     * 31    ：= 带CP56Time2a时标的双点信息          M_DP_TB_1
+     * 在控制方向的系统命令
+     * 100：= 总召唤命令                           C_IC_NA_1
+     */
+    protected int typeId;
 
 
-	/**
-	 * 传送原因   包含测试状态；认可方式；原因序号  位于该帧的第8位  asdu的第三位
-	 * causeOfTransmission
-	 * 3：突发，自发
-	 * 4：初始化
-	 * 6：激活
-	 * 7：激活确认
-	 * 8：停止激活
-	 * 9：停止激活确认
-	 * 10：激活终止
-	 * 20：响应站召唤
-	 */
-	protected Cot cot = new Cot();
-
-	/**
-	 * Set test *
-	 *
-	 * @param test test
-	 */
-	public void setTest(boolean test) {
-		this.getCot().setTest(test);
-	}
-
-	/**
-	 * Set negative confirm *
-	 *
-	 * @param negativeConfirm negative confirm
-	 */
-	public void setNegativeConfirm(boolean negativeConfirm) {
-		this.getCot().setNegativeConfirm(negativeConfirm);
-	}
+    /**
+     * 位于该帧的第七位  asdu的第二位
+     * vsq 可变限定词  分为 sq 和 num
+     * 可变结构限定词  ASDU第一位
+     * 该值为二位16进制数  先转成8位二进制
+     * 二进制第8位 为0顺序信息元素寻址
+     * 二进制第8位 为1 单一信息元素寻址
+     * 剩下7位转为10进制 数值为信息元素数目
+     */
+    protected Vsq vsq = new Vsq();
 
 
-	/**
-	 * Set not *
-	 *
-	 * @param not not
-	 */
-	public void setNot(int not) {
-		this.getCot().setNot(not);
-	}
+    /**
+     * 传送原因   包含测试状态；认可方式；原因序号  位于该帧的第8位  asdu的第三位
+     * causeOfTransmission
+     * 3：突发，自发
+     * 4：初始化
+     * 6：激活
+     * 7：激活确认
+     * 8：停止激活
+     * 9：停止激活确认
+     * 10：激活终止
+     * 20：响应站召唤
+     */
+    protected Cot cot = new Cot();
+
+    /**
+     * Set test *
+     *
+     * @param test test
+     */
+    public void setTest(boolean test) {
+        this.getCot().setTest(test);
+    }
+
+    /**
+     * Set negative confirm *
+     *
+     * @param negativeConfirm negative confirm
+     */
+    public void setNegativeConfirm(boolean negativeConfirm) {
+        this.getCot().setNegativeConfirm(negativeConfirm);
+    }
 
 
-	/**
-	 * 源地址  位于该帧的第9位  asdu的第4位
-	 */
-	protected int originatorAddress;
+    /**
+     * Set not *
+     *
+     * @param not not
+     */
+    public void setNot(int not) {
+        this.getCot().setNot(not);
+    }
 
 
-	/**
-	 * 公共地址
-	 * 子站端保持和主站端一致即可
-	 * 应用数据单元地址 位于该帧的第10,11位  asdu的第5,6位
-	 * 低位在前，高位在后
-	 */
-	protected int commonAddress;
+    /**
+     * 源地址  位于该帧的第9位  asdu的第4位
+     */
+    protected int originatorAddress;
 
 
-	/**
-	 * 数据单元 数据单元的类型是由typeId决定的
-	 * 类型不同里面所承载的数据也不同
-	 */
-	protected T dataFrame;
+    /**
+     * 公共地址
+     * 子站端保持和主站端一致即可
+     * 应用数据单元地址 位于该帧的第10,11位  asdu的第5,6位
+     * 低位在前，高位在后
+     */
+    protected int commonAddress;
 
 
-	/**
-	 * 隐藏信息，大部分是没有的这个看双方协商
-	 */
-	protected byte[] privateInformation;
+    /**
+     * 数据单元 数据单元的类型是由typeId决定的
+     * 类型不同里面所承载的数据也不同
+     */
+    protected T dataFrame;
 
-	/**
-	 * 将字节缓冲区构建为Asdu
-	 * Load byte buf asdu
-	 *
-	 * @param dataInputStream 字节缓冲区 data input stream
-	 * @return the asdu
-	 * @throws Exception exception
-	 */
-	public Asdu loadByteBuf(ByteBuf dataInputStream) throws Exception {
-		//获取类型表示配置文件
-		this.typeId = dataInputStream.readByte() & 0xff;
-		vsq = new Vsq().readByte(dataInputStream.readByte());
-		//传送原因 cot和originatorAddress
-		cot = new Cot().readByte(dataInputStream.readByte());
-		originatorAddress = dataInputStream.readByte();
-		//公共地址
-		byte[] commAddress = new byte[2];
-		dataInputStream.readBytes(commAddress);
-		// 二进制转 int
-		commonAddress = commAddress[0] + ((commAddress[1] & 0xff) << 8);
-		//信息体 类型无法超过128种
-		if (typeId < 128) {
-			//动态加载、扫描 APDU 类
-			Map<Integer, DataTypeClasses> map = AsduTypeAnnotationContainer.getInstance().getDataTypes();
-			//扫描的类中有该
-			if (map.containsKey(typeId)) {
-				// 设置泛型的类
-				this.setDataFrame((T) map.get(typeId).getTypeClass().newInstance());
-				Method load = map.get(typeId).getLoad();
-				// 反射获取泛型类的方法，并传入参数 (dataInputStream, getVsq)
-				// 反射的是  loadByteBuf(ByteBuf is, Vsq vsq) 方法
-				load.invoke(dataFrame, dataInputStream, this.getVsq());
-			} else {
-				byte[] unknown = new byte[dataInputStream.readableBytes()];
-				dataInputStream.readBytes(unknown);
-				//throw new IOException("无法转换信息对象，由于类型标识未知: " + typeId);
-				log.error("无法转换信息对象，由于类型标识未知: " + typeId);
-			}
-			if (dataFrame != null) {
-				log.debug("dataFrame类型为>>>>>>>>>>>>>" + dataFrame.toString());
-			}
-			privateInformation = null;
-		} else {
-			log.debug("无法解析的类型");
-		}
-		return this;
-	}
 
-	/**
-	 * Encode *
-	 *
-	 * @param buffer buffer
-	 */
-	public void encode(List<Byte> buffer) {
+    /**
+     * 隐藏信息，大部分是没有的这个看双方协商
+     */
+    protected byte[] privateInformation;
 
-		buffer.add((byte) typeId);
+    /**
+     * 将字节缓冲区构建为Asdu
+     * Load byte buf asdu
+     *
+     * @param dataInputStream 字节缓冲区 data input stream
+     * @return the asdu
+     * @throws Exception exception
+     */
+    public Asdu loadByteBuf(ByteBuf dataInputStream) throws Exception {
+        //获取类型表示配置文件
+        this.typeId = dataInputStream.readByte() & 0xff;
+        vsq = new Vsq().readByte(dataInputStream.readByte());
+        //传送原因 cot和originatorAddress
+        cot = new Cot().readByte(dataInputStream.readByte());
+        originatorAddress = dataInputStream.readByte();
+        //公共地址
+        byte[] commAddress = new byte[2];
+        dataInputStream.readBytes(commAddress);
+        // 二进制转 int
+        commonAddress = commAddress[0] + ((commAddress[1] & 0xff) << 8);
+        //信息体 类型无法超过128种
+        if (typeId < 128) {
+            //动态加载、扫描 APDU 类
+            Map<Integer, DataTypeClasses> map = AsduTypeAnnotationContainer.getInstance().getDataTypes();
+            //扫描的类中有该
+            if (map.containsKey(typeId)) {
+                // 设置泛型的类
+                this.setDataFrame((T) map.get(typeId).getTypeClass().newInstance());
+                Method load = map.get(typeId).getLoad();
+                // 反射获取泛型类的方法，并传入参数 (dataInputStream, getVsq)
+                // 反射的是  loadByteBuf(ByteBuf is, Vsq vsq) 方法
+                load.invoke(dataFrame, dataInputStream, this.getVsq());
+            } else {
+                byte[] unknown = new byte[dataInputStream.readableBytes()];
+                dataInputStream.readBytes(unknown);
+                //throw new IOException("无法转换信息对象，由于类型标识未知: " + typeId);
+                log.error("无法转换信息对象，由于类型标识未知: " + typeId);
+            }
+            if (dataFrame != null) {
+                log.debug("dataFrame类型为>>>>>>>>>>>>>" + dataFrame.toString());
+            }
+            privateInformation = null;
+        } else {
+            log.debug("无法解析的类型");
+        }
+        return this;
+    }
 
-		vsq.encode(buffer);
+    /**
+     * Encode *
+     *
+     * @param buffer buffer
+     */
+    public void encode(List<Byte> buffer) {
 
-		cot.encode(buffer);
+        buffer.add((byte) typeId);
 
-		buffer.add((byte) originatorAddress);
-		// 消息体中转换 公共地址  int -》 2位  0x十六进制数
-		buffer.add((byte) commonAddress);
-		buffer.add((byte) (commonAddress >> 8));
+        vsq.encode(buffer);
 
-		dataFrame.encode(buffer);
-	}
+        cot.encode(buffer);
+
+        buffer.add((byte) originatorAddress);
+        // 消息体中转换 公共地址  int -》 2位  0x十六进制数
+        buffer.add((byte) commonAddress);
+        buffer.add((byte) (commonAddress >> 8));
+        // 调用命令的各个自己的 解析数据方法
+        dataFrame.encode(buffer);
+    }
 
 }
 

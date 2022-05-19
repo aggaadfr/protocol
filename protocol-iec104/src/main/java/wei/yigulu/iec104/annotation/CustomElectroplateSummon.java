@@ -6,15 +6,18 @@ import wei.yigulu.iec104.apdumodel.Apdu;
 import wei.yigulu.iec104.asdudataframe.CustomElectroplateSummonType;
 import wei.yigulu.iec104.asdudataframe.typemodel.container.Iec104Link;
 import wei.yigulu.iec104.asdudataframe.typemodel.container.LinkContainer;
+import wei.yigulu.iec104.bean.MutationArgs;
 import wei.yigulu.iec104.util.SendAndReceiveNumUtil;
 import wei.yigulu.iec104.util.SendDataFrameHelper;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 /**
  * 自定义电镀召唤帧
- *
+ * <p>
  * Project: protocol
  * Package: wei.yigulu.iec104.annotation
  * Version: 1.0
@@ -26,6 +29,7 @@ import java.util.Random;
 public class CustomElectroplateSummon extends CustomElectroplateSummonType {
 
     private Random rand = new Random();
+    private ScheduledExecutorService executorService = null;
 
     @Override
     public byte[][] handleAndAnswer(Apdu apdu) throws Exception {
@@ -40,7 +44,7 @@ public class CustomElectroplateSummon extends CustomElectroplateSummonType {
             // 传送原因 64 07：总召激活确认
             // 64 03： 总召突发格式
             SendDataFrameHelper.sendElectroplateFrame(channel, commonAddress, 7, apdu.getLog());
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("响应电镀总召失败！");
         }
 
@@ -55,9 +59,17 @@ public class CustomElectroplateSummon extends CustomElectroplateSummonType {
 
             SendDataFrameHelper.sendDdDataFrame(channel, ddDatas, commonAddress, 7, apdu.getLog(), true);
 
-        }catch (Exception e){
+        } catch (Exception e) {
             log.error("响应总召，发送Dd数据失败！");
         }
+
+
+        if (executorService == null) {
+            executorService = new ScheduledThreadPoolExecutor(1);
+            MutationArgs mutationArgs = new MutationArgs();
+            SendDataFrameHelper.sendYxYcMutationFrame(executorService, apdu, channel, commonAddress, 03, rand, mutationArgs);
+        }
+
 
         // TODO 3、结束总召唤帧
         // 更新发送序号

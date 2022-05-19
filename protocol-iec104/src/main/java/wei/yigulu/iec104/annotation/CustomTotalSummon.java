@@ -5,12 +5,14 @@ import io.netty.channel.Channel;
 import lombok.extern.log4j.Log4j;
 import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
 import wei.yigulu.iec104.apdumodel.Apdu;
 import wei.yigulu.iec104.apdumodel.Vsq;
 import wei.yigulu.iec104.asdudataframe.TotalSummonType;
 import wei.yigulu.iec104.asdudataframe.typemodel.InformationBodyAddress;
 import wei.yigulu.iec104.asdudataframe.typemodel.container.Iec104Link;
 import wei.yigulu.iec104.asdudataframe.typemodel.container.LinkContainer;
+import wei.yigulu.iec104.bean.MutationArgs;
 import wei.yigulu.iec104.exception.Iec104Exception;
 import wei.yigulu.iec104.util.SendAndReceiveNumUtil;
 import wei.yigulu.iec104.util.SendDataFrameHelper;
@@ -18,6 +20,11 @@ import wei.yigulu.utils.DataConvertor;
 
 import java.util.HashMap;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 /**
  * 自定义总召处理发送数据
@@ -37,6 +44,8 @@ public class CustomTotalSummon extends TotalSummonType {
     private Random rand = new Random();
     private InformationBodyAddress address = new InformationBodyAddress(20);
     private int value;
+    private ScheduledExecutorService executorService = null;
+
 
     /**
      * 读取总召数据，并打印信息
@@ -67,15 +76,16 @@ public class CustomTotalSummon extends TotalSummonType {
 
         Channel channel = apdu.getChannel();
         int commonAddress = apdu.getAsdu().getCommonAddress();
+        Logger log = apdu.getLog();
 
         try {
             // TODO 1、发送 总召唤确认
             //68（启动符）0E（长度） 00  00（发送序号，2个字节）  02 00（接收序号，2个字节）  64 （类型标识） 01（可变结构限定词）  07  00（传送原因，2个字节）  01  00（公共地址，即RTU站址，2个字节）00  00 00（信息体地址，3个字节）  14 （QOI）
             // 传送原因 64 07：总召激活确认
             // 64 03： 总召突发格式
-            SendDataFrameHelper.sendTotalSummonFrame(channel, commonAddress, 7, apdu.getLog());
+            SendDataFrameHelper.sendTotalSummonFrame(channel, commonAddress, 7, log);
         }catch (Exception e){
-            log.error("响应总召失败！");
+            CustomTotalSummon.log.error("响应总召失败！");
         }
 
 
@@ -86,9 +96,9 @@ public class CustomTotalSummon extends TotalSummonType {
                 yxDatas.put(i + 102, rand.nextBoolean());
             }
             //发送遥信数据帧
-            SendDataFrameHelper.sendYxDataFrame(channel, yxDatas, commonAddress, 20, apdu.getLog());
+            SendDataFrameHelper.sendYxDataFrame(channel, yxDatas, commonAddress, 20, log);
         }catch (Exception e){
-            log.error("响应总召，发送YX数据失败！");
+            CustomTotalSummon.log.error("响应总召，发送YX数据失败！");
         }
 
 
@@ -100,9 +110,9 @@ public class CustomTotalSummon extends TotalSummonType {
                 ycDatas.put(16485 + i, rand.nextInt(100));
             }
             //发送遥测 数据帧
-            SendDataFrameHelper.sendYcDataFrame(channel, ycDatas, commonAddress, 20, apdu.getLog());
+            SendDataFrameHelper.sendYcDataFrame(channel, ycDatas, commonAddress, 20, log);
         }catch (Exception e){
-            log.error("响应总召，发送YC数据失败！");
+            CustomTotalSummon.log.error("响应总召，发送YC数据失败！");
         }
 
         // TODO 5、结束总召唤帧
@@ -120,6 +130,12 @@ public class CustomTotalSummon extends TotalSummonType {
 
 //        log.info("结束总召唤帧的send》》》》》》》》》》》》》》》》》 " + send );
 
+        // 发送突变遥信、遥测数据
+        if (executorService == null){
+            executorService = new ScheduledThreadPoolExecutor(1);
+            MutationArgs mutationArgs = new MutationArgs();
+            SendDataFrameHelper.sendYxYcMutationFrame(executorService, apdu, channel, commonAddress, 03,  rand, mutationArgs);
+        }
 
 
         byte[][] result = new byte[1][];
